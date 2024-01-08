@@ -1,2 +1,3 @@
-# fullStackOpen
-course work for Full Stack Open
+# Full Stack Open
+
+Course work for Full Stack Open
