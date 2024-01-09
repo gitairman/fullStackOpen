@@ -3,6 +3,15 @@ import { useState } from 'react'
 const Statistics = ({ stats }) => {
   const [good, neutral, bad, all, average, percentGood] = stats
 
+  if (!all) {
+    return (
+      <div>
+        <h2>Statistics</h2>
+        <p>No feedback given yet!</p>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>Statistics</h2>
