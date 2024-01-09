@@ -1,28 +1,40 @@
 import { useState } from 'react'
 
+const StatisticLine = ({ text, stat }) => {
+  return (
+    <p>{text} {stat}</p>
+  )
+}
+
 const Statistics = ({ stats }) => {
   const [good, neutral, bad, all, average, percentGood] = stats
 
+  // if no buttons have been pressed yet
   if (!all) {
     return (
-      <div>
-        <h2>Statistics</h2>
+      <>
         <p>No feedback given yet!</p>
-      </div>
+      </>
     )
   }
 
   return (
-    <div>
-      <h2>Statistics</h2>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
-      <p>average {average.toFixed(2)}</p>
-      <p>positive %{percentGood.toFixed(2)}</p>
-    </div>
+    <>
+      <StatisticLine text="good" stat={good} />
+      <StatisticLine text="neutral" stat={neutral} />
+      <StatisticLine text="bad" stat={bad} />
+      <StatisticLine text="all" stat={all} />
+      <StatisticLine text="average" stat={average.toFixed(2)} />
+      <StatisticLine text="positive" stat={"%" + percentGood.toFixed(2)} />
+    </>
   )
+}
+
+const Button = ({ label, handleClick }) => {
+  return (
+    <button onClick={handleClick}>{label}</button>
+  )
+
 }
 
 const App = () => {
@@ -50,11 +62,14 @@ const App = () => {
     <div>
       <section>
         <h2>Give Feedback</h2>
-        <button onClick={handleClickGood}>good</button>
-        <button onClick={handleClickNeutral}>neutral</button>
-        <button onClick={handleClickBad}>bad</button>
+        <Button label="good" handleClick={handleClickGood} />
+        <Button label="neutral" handleClick={handleClickNeutral} />
+        <Button label="bad" handleClick={handleClickBad} />
       </section>
-      <Statistics stats={[good, neutral, bad, all, average, percentGood]} />
+      <section>
+        <h2>Statistics</h2>
+        <Statistics stats={[good, neutral, bad, all, average, percentGood]} />
+      </section>
     </div>
   )
 }
