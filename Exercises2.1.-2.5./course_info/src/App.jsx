@@ -40,8 +40,7 @@ const Part = (props) => {
 const Total = ({ parts }) => {
   console.log(parts)
 
-  let sum = 0;
-  parts.forEach(part => sum += part.exercises)
+  let sum = parts.reduce((accumulator, part) => accumulator + part.exercises, 0,)
 
   return (
     <>
