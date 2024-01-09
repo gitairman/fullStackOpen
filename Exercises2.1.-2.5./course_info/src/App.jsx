@@ -21,7 +21,7 @@ const Content = ({ parts }) => {
   console.log(parts)
   return (
     <>
-      {parts.map(part => <Part part={part.name} exercises={part.exercises} key={part.id}/>)}
+      {parts.map(part => <Part part={part.name} exercises={part.exercises} key={part.id} />)}
     </>
   )
 }
@@ -37,11 +37,15 @@ const Part = (props) => {
   )
 }
 
-const Total = (props) => {
-  console.log(props)
+const Total = ({ parts }) => {
+  console.log(parts)
+
+  let sum = 0;
+  parts.forEach(part => sum += part.exercises)
+
   return (
     <>
-      <p>Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}</p>
+      <p><strong>Total number of exercises is {sum}</strong></p>
     </>
   )
 }
@@ -57,17 +61,17 @@ const App = () => {
     {
       id: 2,
       name: 'Using props to pass data',
-      exercises: 7
+      exercises: 50
     },
     {
       id: 3,
       name: 'State of a component',
-      exercises: 14
+      exercises: 20
     },
     {
       id: 4,
       name: 'test Course',
-      exercises: 77
+      exercises: 30
     }
     ]
   }
