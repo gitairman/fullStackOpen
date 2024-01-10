@@ -53,6 +53,15 @@ const App = () => {
     setNewFilter(e.target.value)
   }
 
+  const handleDelete = (e) => {
+    const personName = e.target.getAttribute("data-name")
+    if (window.confirm(`Are you sure you want to delete ${personName}`)) {
+      const personId = e.target.getAttribute("data-id")
+      personsService.deletePerson(personId)
+        .then(returnedPerson => setPersons([...persons.filter(person => person.id !== returnedPerson.id)]))
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -60,7 +69,7 @@ const App = () => {
       <h3>Add a new person</h3>
       <PersonForm elements={[addPerson, handleNameChange, handleNumberChange, newName, newNumber]} />
       <h3>Numbers</h3>
-      <Persons persons={persons} newFilter={newFilter} />
+      <Persons persons={persons} newFilter={newFilter} handleDelete={handleDelete} />
     </div>
   )
 }
