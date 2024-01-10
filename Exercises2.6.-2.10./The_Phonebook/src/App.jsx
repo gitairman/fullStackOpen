@@ -21,20 +21,52 @@ const App = () => {
   const addPerson = (e) => {
     e.preventDefault()
 
+    let addPerson = true
+    let updatePerson = false
+    let personIdx = 0
+
     if (newName === '' || newNumber === '') {
       alert('Both fields must contain a value!')
+      addPerson = false
     } else if (persons.some(person => person.name === newName)) {
-      alert(`${newName} is already in the phonebook!`)
-      setNewName('')
+      if(window.confirm(`${newName} is already in the phonebook, replace the phone number?`)) {
+        updatePerson = true
+        addPerson = false
+      } else {
+        setNewName('')
+        setNewNumber('')
+      }
     } else if (persons.some(person => person.number === newNumber)) {
       alert(`${newNumber} is already in use by someone else!`)
       setNewNumber('')
-    } else {
+    } 
+    
+    if (addPerson) {
       const newPerson = { name: newName, number: newNumber.toString() }
       personsService
         .create(newPerson)
         .then(returnedPerson => {
           setPersons([...persons, returnedPerson])
+          setNewName('')
+          setNewNumber('')
+        })
+    } else if (updatePerson) {
+      const updatedPerson = { name: newName, number: newNumber.toString() }
+      let personId = ''
+      let updatedPersonArray = [...persons]
+      for (let person of persons) {
+        if (person.name === newName) {
+          personIdx = persons.indexOf(person)
+          personId = person.id
+          updatedPerson.id = personId
+          updatedPersonArray[personIdx].number = newNumber
+          break;
+        }
+      }
+      personsService
+        .update(personId, updatedPerson)
+        .then(returnedPerson => {
+          setPersons(updatedPersonArray)
           setNewName('')
           setNewNumber('')
         })
