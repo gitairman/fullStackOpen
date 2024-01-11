@@ -60,7 +60,7 @@ function App() {
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       {
         displayList ? 
-        <ul style={{listStyle: "none"}}> {countries.map(country => 
+        <ul style={{listStyle: "none", paddingLeft: 0}}> {countries.map(country => 
         <Country key={country.cca3} name={country.name.common} handleShowClick={handleShowClick}/>)}
         </ul> :
         tooManyResultsMessage
