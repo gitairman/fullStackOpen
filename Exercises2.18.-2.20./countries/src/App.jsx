@@ -36,6 +36,10 @@ function App() {
     setFilter(e.target.value)
   }
 
+  const handleShowClick = (e) => {
+    setFilter(e.target.name)
+  }
+
   let displayList = true
   let country = null
   let tooManyResultsMessage = <p>Too many matches!  Please be more specific.</p>
@@ -55,8 +59,10 @@ function App() {
     <>
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       {
-        displayList ? countries.map(country => 
-        <Country key={country.cca3} name={country.name.common} />) :
+        displayList ? 
+        <ul style={{listStyle: "none"}}> {countries.map(country => 
+        <Country key={country.cca3} name={country.name.common} handleShowClick={handleShowClick}/>)}
+        </ul> :
         tooManyResultsMessage
       }
       <Details country={country} />

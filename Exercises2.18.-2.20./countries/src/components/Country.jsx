@@ -1,6 +1,11 @@
-const Country = ({name}) => {
+const Country = ({ name, handleShowClick }) => {
     return (
-        <p>{name}</p>
+        <>
+            <li>
+                {name} <button name={name} onClick={handleShowClick}>show details</button>
+            </li>
+            <br></br>
+        </>
     )
 }
 
