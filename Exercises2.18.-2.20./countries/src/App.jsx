@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+import Filter from './components/Filter'
+import Country from './components/Country'
+import Details from './components/Details'
+
 let allCountries = []
 
 function App() {
@@ -32,34 +36,30 @@ function App() {
     setFilter(e.target.value)
   }
 
-  let dataToRender = []
+  let displayList = true
+  let country = null
+  let tooManyResultsMessage = <p>Too many matches!  Please be more specific.</p>
 
   if (countries.length > 10) {
-    dataToRender = <p>Too many matches!  Please be more specific.</p>
+    displayList = false
+    country = null
   } else if (countries.length === 1) {
-    let key = 0
-    let country = countries[0]
-    dataToRender = [
-        <h2 key={key++}>{country.name.common}</h2>,
-        <p key={key++}>Capital: {country.capital}</p>,
-        <p key={key++}>Population: {country.population.toLocaleString("en-US")}</p>,
-        <p key={key++}>Languages:</p>,
-        <ul key={key++}>
-          {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
-        </ul>,
-        <p key={key++}>Flag:</p>,
-        <img key={key++} src={country.flags.svg} alt={`${country.name.common}Flag`} width="200" height="100" />
-    ]
+    displayList = false
+    country = countries[0]
+    tooManyResultsMessage = <></>
   } else {
-    dataToRender = countries.map(country => <p key={country.cca3}>{country.name.common}</p>)
+    country = null
   }
 
   return (
     <>
-      <div>
-        Find countries: <input type="text" value={filter} onChange={handleFilterChange} />
-        {dataToRender}
-      </div>
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
+      {
+        displayList ? countries.map(country => 
+        <Country key={country.cca3} name={country.name.common} />) :
+        tooManyResultsMessage
+      }
+      <Details country={country} />
     </>
   )
 }
