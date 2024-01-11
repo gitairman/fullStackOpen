@@ -77,7 +77,7 @@ const App = () => {
           setNewNumber('')
         })
         .then(() => displayMessage(`INFO - Number for ${newName} was successfully UPDATED`))
-        .catch(error => displayMessage(error.message))
+        .catch(error => displayMessage(`Entry for ${newName} has already been removed from the server.`))
     }
   }
 
