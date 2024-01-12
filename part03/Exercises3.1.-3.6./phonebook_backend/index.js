@@ -4,25 +4,25 @@ const app = express()
 app.use(express.json())
 
 let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
+    {
+        "id": 1,
+        "name": "Arto Hellas",
+        "number": "040-123456"
     },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
+    {
+        "id": 2,
+        "name": "Ada Lovelace",
+        "number": "39-44-5323523"
     },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
+    {
+        "id": 3,
+        "name": "Dan Abramov",
+        "number": "12-43-234345"
     },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
+    {
+        "id": 4,
+        "name": "Mary Poppendieck",
+        "number": "39-23-6423122"
     }
 ]
 
@@ -47,7 +47,7 @@ app.get('/info', (req, res) => {
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     const personFound = persons.find(person => person.id === id)
-    if(personFound) {
+    if (personFound) {
         res.send(personFound)
     } else {
         res.status(404).send(`Person with id ${id} not found`)
@@ -56,12 +56,18 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
     const personToAdd = req.body
+    let message = ''
     if (personToAdd.name && personToAdd.number) {
-        persons = [...persons, {...personToAdd, id: getId()}]
-        res.status(201).send(`${personToAdd} was successfully added`)
+        if (persons.some(person => person.name === personToAdd.name)) {
+            message = 'Person already exists in the phonebook.'
+        } else {
+            persons = [...persons, { id: getId(), ...personToAdd }]
+            res.status(201).send(`${personToAdd.name} was successfully added`)
+        }
     } else {
-        res.status(400).send('New entry NOT added, information missing')
+        message = 'Name or number is missing.'
     }
+    res.status(400).send(`New entry NOT added. ${message}`)
 })
 
 app.delete('/api/persons/:id', (req, res) => {
