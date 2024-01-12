@@ -3,7 +3,16 @@ const morgan = require('morgan')
 
 const app = express()
 
-app.use(morgan('tiny'))
+morgan.token('data', (req) => {
+    return req.data
+})
+
+const assignData = (req, res, next) => {
+    req.data = JSON.stringify(req.body)
+    next()
+}
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :data'))
 app.use(express.json())
 
 let persons = [
@@ -57,7 +66,7 @@ app.get('/api/persons/:id', (req, res) => {
     }
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', assignData, (req, res) => {
     const personToAdd = req.body
     let message = ''
     if (personToAdd.name && personToAdd.number) {
@@ -65,7 +74,7 @@ app.post('/api/persons', (req, res) => {
             message = 'Person already exists in the phonebook.'
         } else {
             persons = [...persons, { id: getId(), ...personToAdd }]
-            res.status(201).send(`${personToAdd.name} was successfully added`)
+            return res.status(201).send(`${personToAdd.name} was successfully added`)
         }
     } else {
         message = 'Name or number is missing.'
