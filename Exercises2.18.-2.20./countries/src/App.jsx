@@ -31,7 +31,6 @@ function App() {
     }
   }, [filter])
 
-
   const handleFilterChange = (e) => {
     setFilter(e.target.value)
   }
