@@ -26,6 +26,16 @@ let persons = [
     }
 ]
 
+const getId = () => {
+    let range = 50
+    let id = Math.floor(Math.random() * range)
+    while (persons.some(person => person.id === id)) {
+        range += 10
+        id = Math.floor(Math.random() * range)
+    }
+    return id
+}
+
 app.get('/api/persons', (req, res) => {
     res.send(persons)
 })
@@ -40,7 +50,17 @@ app.get('/api/persons/:id', (req, res) => {
     if(personFound) {
         res.send(personFound)
     } else {
-        res.status(404).send('Person not found')
+        res.status(404).send(`Person with id ${id} not found`)
+    }
+})
+
+app.post('/api/persons', (req, res) => {
+    const personToAdd = req.body
+    if (personToAdd.name && personToAdd.number) {
+        persons = [...persons, {...personToAdd, id: getId()}]
+        res.status(201).send(`${personToAdd} was successfully added`)
+    } else {
+        res.status(400).send('New entry NOT added, information missing')
     }
 })
 
