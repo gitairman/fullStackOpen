@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import Persons from './components/Persons'
+import Person from './components/Person'
 import Notification from './components/Notification'
 import personsService from './services/personsService'
 
@@ -51,6 +50,7 @@ const App = () => {
         .create(newPerson)
         .then(returnedPerson => {
           setPersons([...persons, returnedPerson])
+          console.log(returnedPerson)
           setNewName('')
           setNewNumber('')
         })
@@ -58,17 +58,14 @@ const App = () => {
         .catch(error => displayMessage(error.message))
     } else if (updatePerson) {
       const updatedPerson = { name: newName, number: newNumber.toString() }
-      let personId = ''
       let updatedPersonArray = [...persons]
-      for (let person of persons) {
-        if (person.name === newName) {
-          personIdx = persons.indexOf(person)
-          personId = person.id
-          updatedPerson.id = personId
-          updatedPersonArray[personIdx].number = newNumber
-          break;
-        }
-      }
+      let found = persons.find(({ name }) => name === newName)
+      let personId = found.id
+
+      personIdx = persons.indexOf(found)
+      updatedPerson.id = personId
+      updatedPersonArray[personIdx].number = newNumber
+
       personsService
         .update(personId, updatedPerson)
         .then(() => {
@@ -100,16 +97,20 @@ const App = () => {
     }, 4000)
   }
 
-  const handleDelete = (e) => {
-    const personName = e.target.getAttribute("data-name")
-    if (window.confirm(`Are you sure you want to delete ${personName}`)) {
-      const personId = e.target.getAttribute("data-id")
-      personsService.deletePerson(personId)
-        .then(returnedPerson => setPersons([...persons.filter(person => person.id !== returnedPerson.id)]))
-        .then(() => displayMessage(`INFO - ${personName} was successfully DELETED`))
+  const handleDelete = (personToDelete) => {
+    if (window.confirm(`Are you sure you want to delete ${personToDelete.name}`)) {
+      personsService.deletePerson(personToDelete.id)
+        .then(() => {
+          setPersons([...persons.filter(person => person.id !== personToDelete.id)])
+        })
+        .then(() => displayMessage(`INFO - ${personToDelete.name} was successfully DELETED`))
         .catch(error => displayMessage(error.message))
     }
   }
+
+  const peopleToShow = newFilter === ''
+    ? persons
+    : persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
 
   return (
     <div>
@@ -119,7 +120,10 @@ const App = () => {
       <h3>Add a new person</h3>
       <PersonForm elements={[addPerson, handleNameChange, handleNumberChange, newName, newNumber]} />
       <h3>Numbers</h3>
-      <Persons persons={persons} newFilter={newFilter} handleDelete={handleDelete} />
+      <ul style={{paddingLeft: 0}} >
+        {peopleToShow.map(person =>
+          <Person key={person.id} person={person} handleDelete={() => handleDelete(person)} />)}
+      </ul>
     </div>
   )
 }
