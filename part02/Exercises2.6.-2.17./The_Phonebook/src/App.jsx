@@ -50,7 +50,6 @@ const App = () => {
         .create(newPerson)
         .then(returnedPerson => {
           setPersons([...persons, returnedPerson])
-          console.log(returnedPerson)
           setNewName('')
           setNewNumber('')
         })
