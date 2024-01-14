@@ -11,18 +11,14 @@ const Notification = ({ message }) => {
         margin: 10,
         borderStyle: 'solid'
     }
-    let messagePrefix = 'I'
-
 
     if (message === null) {
         return null
-    } else {
-        messagePrefix = message[0]
     }
 
     return (
-        <div style={messagePrefix === 'I' ? infoStyle : errorStyle}>
-            {message}
+        <div style={message.type === 'info' ? infoStyle : errorStyle}>
+            {message.message}
         </div>
     )
 }

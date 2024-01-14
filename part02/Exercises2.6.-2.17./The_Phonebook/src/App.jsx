@@ -16,7 +16,7 @@ const App = () => {
     personsService
       .getAll()
       .then(people => setPersons(people))
-      .catch(error => displayMessage(error.message))
+      .catch(error => displayMessage({ type: 'error', message: error.message }))
   }, [])
 
   const addPerson = (e) => {
@@ -27,10 +27,10 @@ const App = () => {
     let personIdx = 0
 
     if (newName === '' || newNumber === '') {
-      displayMessage('Both fields must contain a value!  Please try again.')
+      displayMessage({ type: 'error', message: 'Both fields must contain a value!  Please try again.' })
       addPerson = false
     } else if (persons.some(person => person.number === newNumber)) {
-      displayMessage(`${newNumber} is already in use by someone else! Please try again.`)
+      displayMessage({ type: 'error', message: `${newNumber} is already in use by someone else! Please try again.` })
       setNewNumber('')
       addPerson = false
     } else if (persons.some(person => person.name === newName)) {
@@ -53,8 +53,8 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-        .then(() => displayMessage(`INFO - ${newName} was successfully ADDED`))
-        .catch(error => displayMessage(error.message))
+        .then(() => displayMessage({ type: 'info', message: `${newName} was successfully ADDED` }))
+        .catch(error => displayMessage({ type: 'error', message: error.message }))
     } else if (updatePerson) {
       const updatedPerson = { name: newName, number: newNumber.toString() }
       let updatedPersonArray = [...persons]
@@ -72,8 +72,8 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-        .then(() => displayMessage(`INFO - Number for ${newName} was successfully UPDATED`))
-        .catch(error => displayMessage(`Entry for ${newName} has already been removed from the server.`))
+        .then(() => displayMessage({ type: 'info', message: `Number for ${newName} was successfully UPDATED` }))
+        .catch(error => displayMessage({ type: 'error', message: `Entry for ${newName} has already been removed from the server.` }))
     }
   }
 
@@ -102,8 +102,8 @@ const App = () => {
         .then(() => {
           setPersons([...persons.filter(person => person.id !== personToDelete.id)])
         })
-        .then(() => displayMessage(`INFO - ${personToDelete.name} was successfully DELETED`))
-        .catch(error => displayMessage(error.message))
+        .then(() => displayMessage({ type: 'info', message: `${personToDelete.name} was successfully DELETED` }))
+        .catch(error => displayMessage({ type: 'error', message: error.message }))
     }
   }
 
@@ -119,7 +119,7 @@ const App = () => {
       <h3>Add a new person</h3>
       <PersonForm elements={[addPerson, handleNameChange, handleNumberChange, newName, newNumber]} />
       <h3>Numbers</h3>
-      <ul style={{paddingLeft: 0}} >
+      <ul style={{ paddingLeft: 0 }} >
         {peopleToShow.map(person =>
           <Person key={person.id} person={person} handleDelete={() => handleDelete(person)} />)}
       </ul>
