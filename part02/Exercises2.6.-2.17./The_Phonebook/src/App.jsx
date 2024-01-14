@@ -22,29 +22,29 @@ const App = () => {
   const addPerson = (e) => {
     e.preventDefault()
 
-    let addPerson = true
+    let addNewPerson = true
     let updatePerson = false
     let personIdx = 0
 
     if (newName === '' || newNumber === '') {
       displayMessage({ type: 'error', message: 'Both fields must contain a value!  Please try again.' })
-      addPerson = false
+      addNewPerson = false
     } else if (persons.some(person => person.number === newNumber)) {
       displayMessage({ type: 'error', message: `${newNumber} is already in use by someone else! Please try again.` })
       setNewNumber('')
-      addPerson = false
+      addNewPerson = false
     } else if (persons.some(person => person.name === newName)) {
       if (window.confirm(`${newName} is already in the phonebook, replace the phone number?`)) {
         updatePerson = true
-        addPerson = false
+        addNewPerson = false
       } else {
-        addPerson = false
+        addNewPerson = false
         setNewName('')
         setNewNumber('')
       }
     }
 
-    if (addPerson) {
+    if (addNewPerson) {
       const newPerson = { name: newName, number: newNumber.toString() }
       personsService
         .create(newPerson)
@@ -54,26 +54,33 @@ const App = () => {
           setNewNumber('')
         })
         .then(() => displayMessage({ type: 'info', message: `${newName} was successfully ADDED` }))
-        .catch(error => displayMessage({ type: 'error', message: error.message }))
+        .catch(error => displayMessage({ type: 'error', message: error.response.data }))
     } else if (updatePerson) {
       const updatedPerson = { name: newName, number: newNumber.toString() }
-      let updatedPersonArray = [...persons]
       let found = persons.find(({ name }) => name === newName)
       let personId = found.id
 
       personIdx = persons.indexOf(found)
       updatedPerson.id = personId
-      updatedPersonArray[personIdx].number = newNumber
+      let updatedPersonsArray = [...persons]
 
       personsService
         .update(personId, updatedPerson)
-        .then(() => {
-          setPersons(updatedPersonArray)
+        .then((returnedPerson) => {
+          if (!returnedPerson) {
+            displayMessage({ type: 'error', message: `${updatedPerson.name} has already been removed from phonebook!` })
+            updatedPersonsArray = updatedPersonsArray.filter(person => person.id !== personId)
+          } else {
+            updatedPersonsArray[personIdx].number = returnedPerson.number
+            displayMessage({ type: 'info', message: `Number for ${newName} was successfully UPDATED` })
+          }
+          setPersons(updatedPersonsArray)
           setNewName('')
           setNewNumber('')
         })
-        .then(() => displayMessage({ type: 'info', message: `Number for ${newName} was successfully UPDATED` }))
-        .catch(error => displayMessage({ type: 'error', message: `Entry for ${newName} has already been removed from the server.` }))
+        .catch(error => {
+          displayMessage({ type: 'error', message: error.response.data })
+        })
     }
   }
 
@@ -99,11 +106,15 @@ const App = () => {
   const handleDelete = (personToDelete) => {
     if (window.confirm(`Are you sure you want to delete ${personToDelete.name}`)) {
       personsService.deletePerson(personToDelete.id)
-        .then(() => {
+        .then((result) => {
           setPersons([...persons.filter(person => person.id !== personToDelete.id)])
+          if (!result) {
+            displayMessage({ type: 'error', message: `${personToDelete.name} has already been removed from phonebook!` })
+          } else {
+            displayMessage({ type: 'info', message: `${personToDelete.name} was successfully DELETED` })
+          }
         })
-        .then(() => displayMessage({ type: 'info', message: `${personToDelete.name} was successfully DELETED` }))
-        .catch(error => displayMessage({ type: 'error', message: error.message }))
+        .catch(error => displayMessage({ type: 'error', message: error.response.data }))
     }
   }
 
