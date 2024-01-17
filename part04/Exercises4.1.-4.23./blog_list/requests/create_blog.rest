@@ -1,0 +1,31 @@
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "The milky way",
+    "author": "Aaron Hopkins",
+    "url": "https://themilkyway.hopkins",
+    "likes": "10"
+}
+
+###
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Why celebrities are famous",
+    "author": "Aaron Hopkins",
+    "url": "https://allthegoss.comedy",
+    "likes": "1000"
+}
+
+###
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "The future of Society",
+    "author": "Aaron Hopkins",
+    "url": "https://allthegoss.comedy",
+    "likes": "50000"
+}
