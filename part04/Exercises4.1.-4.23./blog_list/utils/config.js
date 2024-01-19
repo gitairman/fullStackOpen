@@ -8,8 +8,11 @@ const DBNAME = process.env.NODE_ENV === 'test'
     ? process.env.TEST_DBNAME
     : process.env.DBNAME
 
+const SECRET = process.env.SECRET
+
 module.exports = {
     MONGODB_URI,
     PORT,
-    DBNAME
+    DBNAME,
+    SECRET
 }

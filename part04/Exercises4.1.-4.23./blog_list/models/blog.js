@@ -14,7 +14,11 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: '{PATH} is required!'
   },
-  likes: Number
+  likes: Number,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 }, { versionKey: false })
 
 blogSchema.set('toJSON', {
