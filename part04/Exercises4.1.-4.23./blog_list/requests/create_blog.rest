@@ -29,3 +29,16 @@ content-type: application/json
     "url": "https://allthegoss.comedy",
     "likes": "50000"
 }
+
+### --- CREATING BLOG WITH USER ID
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFpcm1hbiIsImlkIjoiNjVhYTFmMzViNjI0MWQ1M2QwNGE0NGU1IiwiaWF0IjoxNzA1NjQ5NjY3fQ.WayzrWhTCYIQpA0lwcMzdOnH36nsLYZPCS6L4m2NYws
+
+
+{
+    "title": "authorized blog",
+    "author": "Aaron Hopkins",
+    "url": "https://allthegoss.comedy",
+    "likes": "50000"
+}

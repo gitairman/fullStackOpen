@@ -8,6 +8,16 @@ const reqLogger = (req, res, next) => {
   next()
 }
 
+const tokenExtractor = (req, res, next) => {
+  const auth = req.get('authorization')
+  if (auth && auth.startsWith('Bearer ')) {
+    req.token = auth.replace('Bearer ', '')
+  } else {
+    req.token = null
+  }
+  next()
+}
+
 const unknownEndpoint = (req, res) => {
   res.status(404).send({ error: 'unknown endpoint' })
 }
@@ -19,6 +29,10 @@ const errorHandler = (error, req, res, next) => {
     return res.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return res.status(400).json({ error: error.message })
+  } else if (error.name === 'JsonWebTokenError') {
+    return res.status(401).json({ error: error.message })
+  } else if (error.name === 'TokenExpiredError') {
+    return res.stauts(401).json({ error: 'token expired' })
   }
 
   next(error)
@@ -27,5 +41,6 @@ const errorHandler = (error, req, res, next) => {
 module.exports = {
   reqLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }
