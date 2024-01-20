@@ -39,6 +39,19 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFpc
 {
     "title": "authorized blog",
     "author": "Aaron Hopkins",
-    "url": "https://allthegoss.comedy",
+    "url": "https://allthegossip.comedy",
+    "likes": "50000"
+}
+
+### --- CREATING BLOG WITH USER ID
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvcGhpZWxvdSIsImlkIjoiNjVhYTJmZDM1MzZhMWEwMjU5ZmQ2YWIxIiwiaWF0IjoxNzA1Nzc4OTQyLCJleHAiOjE3MDU3ODI1NDJ9.hv2vWEDWFrXq02NMEDkqQOXCM_rRnvhbaX8GzHMGySA
+
+
+{
+    "title": "authorized blog 2",
+    "author": "Sophie Louise",
+    "url": "https://allthegos.comedy",
     "likes": "50000"
 }
