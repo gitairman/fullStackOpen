@@ -11,13 +11,20 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
 
-
-
   useEffect(() => {
     (async () => {
       const blogs = await blogService.getAll()
       setBlogs(blogs)
     })()
+  }, [])
+
+  useEffect(() => {
+    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    if (loggedInUserJSON) {
+      const user = JSON.parse(loggedInUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
   }, [])
 
   const handleLogin = async (e) => {
@@ -29,6 +36,9 @@ const App = () => {
         username, password,
       })
       console.log(user)
+      window.localStorage.setItem(
+        'loggedInUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -41,12 +51,25 @@ const App = () => {
     }
   }
 
-  const handleBlogChange = ({target}) => {
+  const handleBlogChange = ({ target }) => {
     const name = target.getAttribute('name')
     const newBlogObj = {}
     newBlogObj[name] = target.value
 
-    setNewBlog({...newBlog, ...newBlogObj})
+    setNewBlog({ ...newBlog, ...newBlogObj })
+    console.log(newBlog)
+  }
+
+  const handleLogout = (e) => {
+    e.preventDefault()
+    window.localStorage.removeItem('loggedInUser')
+    setUser(null)
+  }
+
+  const addBlog = async () => {
+    const savedBlog = await blogService.create(newBlog)
+    console.log(savedBlog)
+    setBlogs([...blogs, savedBlog])
   }
 
   const loginForm = () => (
@@ -71,15 +94,14 @@ const App = () => {
     </form>
   )
 
-  const addBlog = async () => {
-    const savedBlog = await blogService.create(newBlog)
-    console.log(savedBlog)
-    setBlogs([...blogs, savedBlog])
-  }
-
   const blogForm = () => (
     <form onSubmit={addBlog}>
-      <p>Currently logged in as: {user.username}</p>
+      Currently logged in as: {user.username}
+      <button
+        style={{ marginLeft: 5 }}
+        onClick={handleLogout}>
+        logout
+      </button>
       <h3>Add New Blog</h3>
       <div>
         Title:
@@ -109,7 +131,7 @@ const App = () => {
         />
       </div><br />
 
-      <button type="submit">save</button>
+      <button type="submit">add</button>
     </form>
   )
 
