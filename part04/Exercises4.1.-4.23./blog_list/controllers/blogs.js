@@ -1,9 +1,7 @@
-const config = require('../utils/config')
-const jwt = require('jsonwebtoken')
 const blogsRouter = require('express').Router()
+const middleware = require('../utils/middleware')
 
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res) => {
 
@@ -25,19 +23,17 @@ blogsRouter.get('/:id', async (req, res) => {
   }
 })
 
-blogsRouter.post('/', async (req, res) => {
+blogsRouter.post('/', middleware.tokenExtractor, middleware.userExtractor, async (req, res) => {
   const blog = new Blog(req.body)
-  const decodedToken = jwt.verify(req.token, config.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+
+  const user = req.user
 
   blog.user = user.id
 
   if (!blog.likes) {
     blog.likes = 0
   }
+
   const savedBlog = await blog.save()
   user.blogs = [...user.blogs, savedBlog.id]
   await user.save()
@@ -45,23 +41,31 @@ blogsRouter.post('/', async (req, res) => {
 
 })
 
-blogsRouter.put('/:id', async (req, res) => {
-  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true })
-  res.status(201).send(updatedBlog)
-})
-
-blogsRouter.delete('/:id', async (req, res) => {
+blogsRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
   if (!blog) {
     res.status(404).end()
   }
 
-  const decodedToken = jwt.verify(req.token, config.SECRET)
-  if (!decodedToken.id) {
-    return res.status(401).json({ error: 'token invalid' })
+  const user = req.user
+
+  if (blog.user.toString() !== user._id.toString()) {
+    return res.status(401).json({ error: 'blog can only be updated by user who created it!'})
   }
-  const user = await User.findById(decodedToken.id)
+
+  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  res.status(201).send(updatedBlog)
+})
+
+blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, async (req, res) => {
+  const blog = await Blog.findById(req.params.id)
+
+  if (!blog) {
+    res.status(404).end()
+  }
+
+  const user = req.user
 
   if (blog.user.toString() !== user._id.toString()) {
     return res.status(401).json({ error: 'blog can only be deleted by user who created it!'})

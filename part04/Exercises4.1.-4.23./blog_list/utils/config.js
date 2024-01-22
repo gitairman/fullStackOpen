@@ -4,7 +4,7 @@ const PORT = process.env.PORT
 
 const MONGODB_URI = process.env.MONGODB_URI
 
-const DBNAME = process.env.NODE_ENV === 'test'
+const DBNAME = process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development'
     ? process.env.TEST_DBNAME
     : process.env.DBNAME
 

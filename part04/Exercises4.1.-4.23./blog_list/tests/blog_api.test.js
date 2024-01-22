@@ -4,10 +4,17 @@ const app = require('../app')
 const api = supertest(app)
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
-beforeEach(async () => {
+beforeAll(async () => {
+
+  await User.deleteMany()
   await Blog.deleteMany()
-  await Blog.insertMany(helper.initialBlogs)
+
+  await helper.loadUsers()
+  await helper.loginUsers()
+  await helper.loadBlogs()
+
 })
 
 describe('when there is initially some blogs saved', () => {
@@ -38,11 +45,13 @@ describe('viewing a specific note', () => {
     const blogsAtStart = await helper.blogsInDb()
 
     const blogToView = blogsAtStart[0]
+    blogToView.user = blogToView.user.toString()
 
     const resultBlog = await api
       .get(`/api/blogs/${blogToView.id}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
+
     expect(resultBlog.body).toEqual(blogToView)
   })
 
@@ -77,6 +86,7 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(helper.tokens[0], { type: "bearer" })
       .expect(201)
       .expect('Content-type', /application\/json/)
 
@@ -89,22 +99,25 @@ describe('addition of a new blog', () => {
   })
 
   test('if missing from request, likes to default to 0', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
     const newBlog = {
       title: 'A day in the life of...',
       author: 'Aaron Hopkins',
-      url: 'http://www.aaronhopkins.dev/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      url: 'http://www.aaronhopkins.dev/~rubinson1/copyright_violations/Go_To_Considered_Harmful.html',
     }
 
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(helper.tokens[0], { type: "bearer" })
       .expect(201)
       .expect('Content-type', /application\/json/)
 
     const res = await api.get('/api/blogs')
     const blogsInDb = res.body
 
-    expect(blogsInDb).toHaveLength(helper.initialBlogs.length + 1)
+    expect(blogsInDb).toHaveLength(blogsAtStart.length + 1)
     expect(blogsInDb[blogsInDb.length - 1].likes).toBe(0)
   })
 
@@ -118,6 +131,7 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(helper.tokens[0], { type: "bearer" })
       .expect(400)
   })
 
@@ -131,7 +145,23 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .auth(helper.tokens[0], { type: "bearer" })
       .expect(400)
+  })
+
+  test('adding blog without providing token sends statuscode 401', async () => {
+    const newBlog = {
+      title: 'A day in the life of...',
+      author: 'Aaron Hopkins',
+      url: 'http://www.aaronhopkins.dev/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
+      likes: 17,
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(401)
+      .expect('Content-type', /application\/json/)
   })
 
 })
@@ -148,6 +178,7 @@ describe('updating a blog', () => {
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
       .send(blogToUpdate)
+      .auth(helper.tokens[0], { type: "bearer" })
       .expect(201)
 
   })
@@ -162,11 +193,12 @@ describe('deletion of a blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .auth(helper.tokens[0], { type: "bearer" })
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1)
 
     const titles = blogsAtEnd.map(blog => blog.title)
 

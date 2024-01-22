@@ -1,3 +1,6 @@
+const supertest = require('supertest')
+const app = require('../app')
+const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
@@ -51,6 +54,26 @@ const initialBlogs = [
     }
 ]
 
+const initialUsers = [
+    {
+        username: 'root',
+        name: 'initialuser',
+        password: 'password1'
+    },
+    {
+        username: 'airman',
+        name: 'Aaron Hopkins',
+        password: 'password2'
+    },
+    {
+        username: 'sophielou',
+        name: 'Sophie Louise',
+        password: 'password2'
+    }
+]
+
+const tokens = []
+
 const nonExistingId = async () => {
     const blog = new Blog({
         title: 'fake title',
@@ -73,6 +96,69 @@ const usersInDb = async () => {
     return users.map(user => user.toJSON())
 }
 
+const loadUsers = async () => {
+
+    initialUsers.forEach(async (user) => {
+        await api
+            .post('/api/users')
+            .send(user)
+    })
+
+    let usrsInDb = []
+    while (usrsInDb.length < initialUsers.length) {
+        usrsInDb = await usersInDb()
+    }
+
+    return 'users loaded into Db'
+
+}
+
+const loginUsers = async () => {
+
+    initialUsers.forEach(async (user) => {
+
+        const result = await api
+            .post('/api/login')
+            .send(user)
+
+        tokens.push(result.body.token)
+    })
+
+    while (tokens.length !== initialUsers.length) {
+        await usersInDb()
+    }
+
+    return 'users logged in'
+
+}
+
+const loadBlogs = async () => {
+
+    initialBlogs.forEach(async (blog) => {
+        await api
+            .post('/api/blogs')
+            .auth(tokens[0], { type: "bearer" })
+            .send(blog)
+
+    })
+
+    let blgsInDb = []
+    while (blgsInDb.length < initialBlogs.length) {
+        blgsInDb = await blogsInDb()
+    }
+
+    return 'finished loading blogs'
+
+}
+
 module.exports = {
-    initialBlogs, nonExistingId, blogsInDb, usersInDb
+    initialBlogs,
+    initialUsers,
+    tokens,
+    nonExistingId,
+    blogsInDb,
+    usersInDb,
+    loadUsers,
+    loginUsers,
+    loadBlogs
 }
