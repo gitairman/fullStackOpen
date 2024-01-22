@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -43,11 +44,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      displayMessage({ type: 'info', message: `Successfully logged in with ${username}!` })
     } catch (err) {
-      setMessage('Wrong credentials')
-      setTimeout(() => {
-        setMessage(null)
-      }, 3000)
+      console.log(err)
+      displayMessage({ type: 'error', message: err.response.data.error })
     }
   }
 
@@ -64,12 +64,20 @@ const App = () => {
     e.preventDefault()
     window.localStorage.removeItem('loggedInUser')
     setUser(null)
+    displayMessage({ type: 'info', message: `${user.username} was successfully logged out!` })
   }
 
   const addBlog = async () => {
     const savedBlog = await blogService.create(newBlog)
     console.log(savedBlog)
     setBlogs([...blogs, savedBlog])
+  }
+
+  const displayMessage = (messageToDisplay) => {
+    setMessage(messageToDisplay)
+    setTimeout(() => {
+      setMessage(null)
+    }, 4000)
   }
 
   const loginForm = () => (
@@ -138,6 +146,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification message={message} />
 
       {user === null ? loginForm() : blogForm()}
 
