@@ -57,7 +57,6 @@ const App = () => {
     newBlogObj[name] = target.value
 
     setNewBlog({ ...newBlog, ...newBlogObj })
-    console.log(newBlog)
   }
 
   const handleLogout = (e) => {
@@ -67,10 +66,11 @@ const App = () => {
     displayMessage({ type: 'info', message: `${user.username} was successfully logged out!` })
   }
 
-  const addBlog = async () => {
+  const addBlog = async (e) => {
+    e.preventDefault()
     const savedBlog = await blogService.create(newBlog)
-    console.log(savedBlog)
     setBlogs([...blogs, savedBlog])
+    displayMessage({ type: 'info', message: `New blog added - ${savedBlog.title} by ${savedBlog.author}`})
   }
 
   const displayMessage = (messageToDisplay) => {
