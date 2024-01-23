@@ -136,6 +136,7 @@ const App = () => {
         <>
           Currently logged in as: {user.username}
           <button
+            id="logout-button"
             style={{ marginLeft: 5, marginBottom: 10 }}
             onClick={handleLogout}>
             logout

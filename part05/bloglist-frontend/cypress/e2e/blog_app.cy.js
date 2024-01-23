@@ -1,5 +1,5 @@
 describe('Blog app', function () {
-  beforeEach(function () {
+  before(function () {
     cy.request('POST', 'http://localhost:3001/api/testing/reset')
 
     const user = {
@@ -18,6 +18,7 @@ describe('Blog app', function () {
 
   describe('Login', function () {
     beforeEach(function () {
+      cy.visit('http://localhost:5173')
       cy.get('#username').clear()
       cy.get('#password').clear()
     })
@@ -39,6 +40,7 @@ describe('Blog app', function () {
 
   describe('When user logged in', function () {
     beforeEach(function () {
+      cy.visit('http://localhost:5173')
       cy.get('#username').type('airman')
       cy.get('#password').type('aaronrules')
       cy.get('#login-button').click()
@@ -49,6 +51,25 @@ describe('Blog app', function () {
       cy.get('#url').type('thisisanewurl.com')
       cy.get('#addBlogBtn').click()
       cy.get('div').should('have.class', 'blog')
+    })
+    it('can like a blog', function () {
+      cy.get('button').contains('view').click()
+      cy.get('button').contains('like').click()
+      cy.contains('UPDATED')
+    })
+    it('can delete a blog they created', function () {
+      cy.get('button').contains('view').click()
+      cy.get('button').contains('delete blog')
+    })
+
+    describe('when user logs out', function() {
+      beforeEach(function() {
+        cy.get('#logout-button').click()
+      })
+      it('cannot delete a blog', function() {
+        cy.get('button').contains('view').click()
+        cy.get('button').contains('delete blog').should('not.exist')
+      })
     })
 
   })
