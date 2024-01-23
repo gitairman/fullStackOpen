@@ -37,7 +37,11 @@ blogsRouter.post('/', middleware.tokenExtractor, middleware.userExtractor, async
   const savedBlog = await blog.save()
   user.blogs = [...user.blogs, savedBlog.id]
   await user.save()
-  res.status(201).json(savedBlog)
+  const populatedBlog = await Blog.findById(savedBlog.id).populate('user', {
+    username: 1,
+    name: 1
+  })
+  res.status(201).json(populatedBlog)
 
 })
 
@@ -51,10 +55,16 @@ blogsRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, asy
   const user = req.user
 
   if (blog.user.toString() !== user._id.toString()) {
-    return res.status(401).json({ error: 'blog can only be updated by user who created it!'})
+    return res.status(401).json({ error: 'blog can only be updated by user who created it!' })
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('user', {
+    username: 1,
+    name: 1
+  })
+
+  console.log(updatedBlog)
+
   res.status(201).send(updatedBlog)
 })
 
@@ -68,7 +78,7 @@ blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, 
   const user = req.user
 
   if (blog.user.toString() !== user._id.toString()) {
-    return res.status(401).json({ error: 'blog can only be deleted by user who created it!'})
+    return res.status(401).json({ error: 'blog can only be deleted by user who created it!' })
   }
 
   await Blog.findByIdAndDelete(req.params.id)

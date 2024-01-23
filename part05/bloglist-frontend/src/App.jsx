@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({})
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -28,6 +30,33 @@ const App = () => {
     }
   }, [])
 
+  const addBlog = async (blogObj) => {
+    try {
+      blogFormRef.current.toggleVisibility()
+      const savedBlog = await blogService.create(blogObj)
+      setBlogs([...blogs, savedBlog])
+      displayMessage({ type: 'info', message: `New blog added - ${savedBlog.title} by ${savedBlog.author}` })
+    } catch (err) {
+      console.log(err)
+      displayMessage({ type: 'error', message: err.response.data.error })
+    }
+  }
+
+  const updateBlog = async (id, blogObj) => {
+    try {
+      const savedBlog = await blogService.update(id, blogObj)
+      const updateIdx = blogs.findIndex(blog => blog.id === id)
+      const updatedBlogs = [...blogs]
+      updatedBlogs[updateIdx] = savedBlog
+      console.log(savedBlog)
+      setBlogs(updatedBlogs)
+      displayMessage({ type: 'info', message: `Blog was UPDATED - ${savedBlog.title} by ${savedBlog.author}` })
+    } catch (err) {
+      console.log(err)
+      displayMessage({ type: 'error', message: err.response.data.error })
+    }
+  }
+
   const handleLogin = async (e) => {
     e.preventDefault()
     console.log('logging in with', username, password)
@@ -36,7 +65,6 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
-      console.log(user)
       window.localStorage.setItem(
         'loggedInUser', JSON.stringify(user)
       )
@@ -51,26 +79,11 @@ const App = () => {
     }
   }
 
-  const handleBlogChange = ({ target }) => {
-    const name = target.getAttribute('name')
-    const newBlogObj = {}
-    newBlogObj[name] = target.value
-
-    setNewBlog({ ...newBlog, ...newBlogObj })
-  }
-
   const handleLogout = (e) => {
     e.preventDefault()
     window.localStorage.removeItem('loggedInUser')
     setUser(null)
     displayMessage({ type: 'info', message: `${user.username} was successfully logged out!` })
-  }
-
-  const addBlog = async (e) => {
-    e.preventDefault()
-    const savedBlog = await blogService.create(newBlog)
-    setBlogs([...blogs, savedBlog])
-    displayMessage({ type: 'info', message: `New blog added - ${savedBlog.title} by ${savedBlog.author}`})
   }
 
   const displayMessage = (messageToDisplay) => {
@@ -81,66 +94,24 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <div>
-        username:
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)} /><br />
-      </div>
-      <div>
-        password:
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)} />
-      </div>
-      <button type="submit">login</button>
-    </form>
+    <Togglable buttonLabel="login">
+      <LoginForm
+        username={username}
+        password={password}
+        handleSubmit={handleLogin}
+        handleUsernameChange={({ target }) => setUsername(target.value)}
+        handlePasswordChange={({ target }) => setPassword(target.value)}
+      />
+    </Togglable>
   )
 
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      Currently logged in as: {user.username}
-      <button
-        style={{ marginLeft: 5 }}
-        onClick={handleLogout}>
-        logout
-      </button>
-      <h3>Add New Blog</h3>
-      <div>
-        Title:
-        <input
-          type="text"
-          value={newBlog.title}
-          name="title"
-          onChange={handleBlogChange}
-        />
-      </div><br />
-      <div>
-        Author:
-        <input
-          type="text"
-          value={newBlog.author}
-          name="author"
-          onChange={handleBlogChange}
-        />
-      </div><br />
-      <div>
-        Url:
-        <input
-          type="text"
-          value={newBlog.url}
-          name="url"
-          onChange={handleBlogChange}
-        />
-      </div><br />
+  const blogFormRef = useRef()
 
-      <button type="submit">add</button>
-    </form>
+  const blogForm = () => (
+    <Togglable buttonLabel="new blog" ref={blogFormRef}>
+      <BlogForm createBlog={addBlog}
+      />
+    </Togglable>
   )
 
   return (
@@ -148,11 +119,22 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={message} />
 
-      {user === null ? loginForm() : blogForm()}
+
+      {user === null ? loginForm() :
+        <>
+          Currently logged in as: {user.username}
+          <button
+            style={{ marginLeft: 5, marginBottom: 10 }}
+            onClick={handleLogout}>
+            logout
+          </button>
+          {blogForm()}
+        </>
+      }
 
       <section>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} handleLike={updateBlog} />
         )}
 
       </section>
