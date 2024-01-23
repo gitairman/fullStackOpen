@@ -45,3 +45,31 @@ test('URL and likes are shown when button controlling the shown details has been
   expect(div).toHaveTextContent(10)
 
 })
+
+test('when like button is clicked twice, event handler is called twice', async () => {
+
+  const blog = {
+    title: 'this is a test blog',
+    author: 'this is a test author',
+    url: 'this is a test url',
+    likes: 10,
+    user: {
+      username: 'this is a test username'
+    }
+  }
+
+  const mockHandler = jest.fn()
+
+  render(<Blog blog={blog} addedBy={{ username: 'this is a test username' }} handleLike={mockHandler}/>)
+
+  const user = userEvent.setup()
+  const viewButton = screen.getByText('view')
+  await user.click(viewButton)
+
+  const likeButton = screen.getByText('like')
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
+
+})
