@@ -9,10 +9,10 @@ test('renders title and author', () => {
     author: 'this is a test author',
   }
 
-  render(<Blog blog={blog} />)
+  const { container } = render(<Blog blog={blog} />)
 
-  const title = screen.getByText('this is a test blog', { exact: false })
-  const author = screen.getByText('this is a test author', { exact: false })
-  expect(title).toBeDefined()
-  expect(author).toBeDefined()
+  const div = container.querySelector('.blog')
+  
+  expect(div).toHaveTextContent('this is a test blog')
+  expect(div).toHaveTextContent('this is a test author')
 })
