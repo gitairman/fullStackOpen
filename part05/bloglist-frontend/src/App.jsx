@@ -17,6 +17,7 @@ const App = () => {
   useEffect(() => {
     (async () => {
       const blogs = await blogService.getAll()
+      blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(blogs)
     })()
   }, [])
@@ -34,7 +35,7 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility()
       const savedBlog = await blogService.create(blogObj)
-      setBlogs([...blogs, savedBlog])
+      setBlogs([...blogs, savedBlog].sort((a, b) => b.likes - a.likes))
       displayMessage({ type: 'info', message: `New blog added - ${savedBlog.title} by ${savedBlog.author}` })
     } catch (err) {
       console.log(err)
@@ -48,13 +49,24 @@ const App = () => {
       const updateIdx = blogs.findIndex(blog => blog.id === id)
       const updatedBlogs = [...blogs]
       updatedBlogs[updateIdx] = savedBlog
-      console.log(savedBlog)
+      updatedBlogs.sort((a, b) => b.likes - a.likes)
       setBlogs(updatedBlogs)
       displayMessage({ type: 'info', message: `Blog was UPDATED - ${savedBlog.title} by ${savedBlog.author}` })
     } catch (err) {
       console.log(err)
       displayMessage({ type: 'error', message: err.response.data.error })
     }
+  }
+
+  const deleteBlog = async (id) => {
+    try {
+      await blogService.deleteBlog(id)
+      const updatedBlogs = blogs.filter(blog => blog.id !== id)
+      setBlogs(updatedBlogs)
+    } catch (err) {
+      displayMessage({ type: 'error', message: err.response.data.error })
+    }
+
   }
 
   const handleLogin = async (e) => {
@@ -134,7 +146,7 @@ const App = () => {
 
       <section>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={updateBlog} />
+          <Blog key={blog.id} blog={blog} handleLike={updateBlog} handleDelete={deleteBlog} />
         )}
 
       </section>
