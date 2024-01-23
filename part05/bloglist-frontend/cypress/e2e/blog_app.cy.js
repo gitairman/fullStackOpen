@@ -37,7 +37,21 @@ describe('Blog app', function () {
     })
   })
 
+  describe('When user logged in', function () {
+    beforeEach(function () {
+      cy.get('#username').type('airman')
+      cy.get('#password').type('aaronrules')
+      cy.get('#login-button').click()
+    })
+    it('can add a new blog', function () {
+      cy.get('#title').type('this is a new blog title')
+      cy.get('#author').type('this is a new blog author')
+      cy.get('#url').type('thisisanewurl.com')
+      cy.get('#addBlogBtn').click()
+      cy.get('div').should('have.class', 'blog')
+    })
 
+  })
 
 
 })
