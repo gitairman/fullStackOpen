@@ -12,22 +12,27 @@ const LoginForm = ({
       <div>
         username:
         <input
+          id="username"
           type="text"
           value={username}
           name="Username"
-          onChange={handleUsernameChange} /><br />
+          onChange={handleUsernameChange}
+          placeholder='type username here' /><br />
       </div>
       <div>
         password:
         <input
+          id="password"
           type="password"
           value={password}
           name="Password"
-          onChange={handlePasswordChange} />
+          onChange={handlePasswordChange}
+          placeholder='type password here' />
       </div><br />
-      <button type="submit">login</button>
+      <button id="login-button" type="submit">login</button>
     </form>
-  )}
+  )
+}
 
 LoginForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
