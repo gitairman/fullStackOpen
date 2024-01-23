@@ -146,7 +146,7 @@ const App = () => {
 
       <section>
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} handleLike={updateBlog} handleDelete={deleteBlog} />
+          <Blog key={blog.id} blog={blog} handleLike={updateBlog} handleDelete={deleteBlog} addedBy={user} />
         )}
 
       </section>

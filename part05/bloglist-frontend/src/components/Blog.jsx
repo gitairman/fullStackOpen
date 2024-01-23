@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, handleLike, handleDelete }) => {
+const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
 
   const [blogDetails, setBlogDetails] = useState(false)
 
@@ -33,13 +33,23 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
     }
   }
 
+  const deleteBtn = () => {
+    if (addedBy !== null) {
+      if (blog.user.username === addedBy.username) {
+        return (
+          <button onClick={handleDeleteClick}>delete blog</button>
+        )
+      }
+    }
+  }
+
   const blogDeets = () => (
     <>
       <strong>Author:</strong> {blog.author} <br />
       <strong>Url:</strong> {blog.url} <br />
       <strong>Likes:</strong> {blog.likes} <button onClick={handleLikeClick}>like</button><br />
       <strong>Added by User:</strong> {'user' in blog && blog.user.username}<br />
-      <button onClick={handleDeleteClick}>delete blog</button>
+      {deleteBtn()}
     </>
   )
 
