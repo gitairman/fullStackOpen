@@ -40,10 +40,7 @@ describe('Blog app', function () {
 
   describe('When user logged in', function () {
     beforeEach(function () {
-      cy.visit('http://localhost:5173')
-      cy.get('#username').type('airman')
-      cy.get('#password').type('aaronrules')
-      cy.get('#login-button').click()
+      cy.login({ username: 'airman', password: 'aaronrules' })
     })
     it('can add a new blog', function () {
       cy.get('#title').type('this is a new blog title')
@@ -62,16 +59,51 @@ describe('Blog app', function () {
       cy.get('button').contains('delete blog')
     })
 
-    describe('when user logs out', function() {
-      beforeEach(function() {
+    describe('when user logs out', function () {
+      beforeEach(function () {
         cy.get('#logout-button').click()
       })
-      it('cannot delete a blog', function() {
+      it('cannot delete a blog', function () {
         cy.get('button').contains('view').click()
         cy.get('button').contains('delete blog').should('not.exist')
       })
     })
 
+  })
+
+  describe('When blogs exist', function () {
+    before(function () {
+      cy.login({ username: 'airman', password: 'aaronrules' })
+      cy.createBlog({
+        title: 'blog with least likes',
+        author: 'miserable guy',
+        url: 'leastlikes.com',
+        likes: 5
+      })
+      cy.createBlog({
+        title: 'blog with most likes',
+        author: 'amazing guy',
+        url: 'mostlikes.com',
+        likes: 20
+      })
+      cy.createBlog({
+        title: 'blog with average likes',
+        author: 'decent guy',
+        url: 'averagelikes.com',
+        likes: 10
+      })
+      cy.get('.blogDetails').click({ multiple: true })
+    })
+    it('they are in sorted order with most likes first', function () {
+      const likeArray = []
+      cy.get('.likes').each(($span) => {
+        likeArray.push(Number($span.text()))
+      })
+      console.log(likeArray)
+      expect(likeArray.every((val, idx, arr) =>
+        idx === 0 || val <= arr[idx - 1])
+      ).to.eq(true)
+    })
   })
 
 

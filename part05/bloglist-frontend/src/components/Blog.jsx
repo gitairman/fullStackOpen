@@ -46,7 +46,7 @@ const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
   const blogDeets = () => (
     <>
       <strong>Url:</strong> {blog.url} <br />
-      <strong>Likes:</strong> {blog.likes} <button onClick={handleLikeClick}>like</button><br />
+      <strong>Likes:</strong> <span className='likes'>{blog.likes}</span> <button onClick={handleLikeClick}>like</button><br />
       <strong>Added by User:</strong> {'user' in blog && blog.user.username}<br />
       {deleteBtn()}
     </>
@@ -54,7 +54,7 @@ const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
 
   return (
     <div style={blogStyle} className='blog'>
-      <strong>Title:</strong> {blog.title} <button onClick={() => setBlogDetails(!blogDetails)}>{blogDetails ? 'hide' : 'view'}</button><br />
+      <strong>Title:</strong> {blog.title} <button className='blogDetails' onClick={() => setBlogDetails(!blogDetails)}>{blogDetails ? 'hide' : 'view'}</button><br />
       <strong>Author:</strong> {blog.author} <br />
       {blogDetails && blogDeets()}
 
