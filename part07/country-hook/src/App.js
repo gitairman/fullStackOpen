@@ -7,7 +7,6 @@ const useField = (type) => {
   const onChange = (event) => {
     setValue(event.target.value)
   }
-
   return {
     type,
     value,
@@ -20,10 +19,7 @@ const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
   useEffect(() => {
-    console.log('useEffecting...')
-
     if (name !== '') {
-
       (async () => {
         try {
           const res = await axios.get(`${baseUrl}/${name}`)
@@ -33,13 +29,10 @@ const useCountry = (name) => {
           setCountry({ found: false })
         }
       })()
-
     } else {
       setCountry(null)
     }
-
   }, [name])
-
   return country
 }
 
