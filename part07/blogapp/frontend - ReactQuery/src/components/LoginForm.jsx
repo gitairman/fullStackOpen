@@ -33,7 +33,6 @@ const LoginForm = () => {
   const username = useField('text', 'username')
   const password = useField('password', 'password')
 
-  const queryClient = useQueryClient()
   const dispatchLogin = useLoggedInDispatch()
   const dispatchMessage = useMessageDispatch()
 

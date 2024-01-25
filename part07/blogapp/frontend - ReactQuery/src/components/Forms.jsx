@@ -8,7 +8,6 @@ import { useMessageDispatch } from '../NotificationContext'
 const Forms = () => {
   const loggedIn = useLoggedIn()
   const dispatchLogin = useLoggedInDispatch()
-
   const dispatchMessage = useMessageDispatch()
 
   const handleLogout = (e) => {
