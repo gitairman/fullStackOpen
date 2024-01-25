@@ -1,67 +1,96 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
+import { create } from '../services/blogs'
+import { useMessageDispatch } from '../NotificationContext'
+import { useBlogsDispatch } from '../blogsContext'
 
+const BlogForm = () => {
+  const useField = (type, id) => {
+    const name = id
+    const placeholder = `write ${name} here`
+    const [value, setValue] = useState('')
 
-const BlogForm = ({ createBlog }) => {
-  const initBlogState = {
-    title: '',
-    author: '',
-    url: '',
+    const onChange = (e) => {
+      setValue(e.target.value)
+    }
+
+    const onReset = () => {
+      setValue('')
+    }
+
+    return {
+      id,
+      name,
+      placeholder,
+      type,
+      value,
+      onChange,
+      onReset,
+    }
   }
 
-  const [newBlog, setNewBlog] = useState(initBlogState)
+  const title = useField('text', 'title')
+  const author = useField('text', 'author')
+  const url = useField('text', 'url')
 
-  const handleBlogChange = ({ target }) => {
-    const name = target.getAttribute('name')
-    const newBlogObj = {}
-    newBlogObj[name] = target.value
+  const dispatchMessage = useMessageDispatch()
+  const dispatchBlogs = useBlogsDispatch()
 
-    setNewBlog({ ...newBlog, ...newBlogObj })
-  }
+  const newBlogMutation = useMutation({
+    mutationFn: create,
+    onSuccess: (createdBlog) => {
+      dispatchBlogs({ type: 'append', payload: createdBlog })
+      dispatchMessage({
+        type: 'info',
+        message: `New blog '${createdBlog.title}' has just been added`,
+      })
+      setTimeout(() => {
+        dispatchMessage(null)
+      }, 5000)
+    },
+    onError: (err) => {
+      dispatchMessage({ type: 'error', message: err.response.data.error })
+      setTimeout(() => {
+        dispatchMessage(null)
+      }, 5000)
+    },
+  })
 
   const addBlog = (e) => {
     e.preventDefault()
-    createBlog(newBlog)
-    setNewBlog(initBlogState)
+    const newBlog = {
+      title: title.value,
+      author: author.value,
+      url: url.value,
+    }
+    newBlogMutation.mutate(newBlog)
+    title.onReset()
+    author.onReset()
+    url.onReset()
   }
 
   return (
     <form onSubmit={addBlog}>
-      <h3 style={{ marginTop: 0 }} >Add New Blog</h3>
+      <h3 style={{ marginTop: 0 }}>Add New Blog</h3>
       <div>
         Title:
-        <input
-          id="title"
-          type="text"
-          value={newBlog.title}
-          name="title"
-          onChange={handleBlogChange}
-          placeholder='write title here'
-        />
-      </div><br />
+        <input {...title} />
+      </div>
+      <br />
       <div>
         Author:
-        <input
-          id="author"
-          type="text"
-          value={newBlog.author}
-          name="author"
-          onChange={handleBlogChange}
-          placeholder='write author here'
-        />
-      </div><br />
+        <input {...author} />
+      </div>
+      <br />
       <div>
         Url:
-        <input
-          id="url"
-          type="text"
-          value={newBlog.url}
-          name="url"
-          onChange={handleBlogChange}
-          placeholder='write url here'
-        />
-      </div><br />
+        <input {...url} />
+      </div>
+      <br />
 
-      <button id='addBlogBtn' type="submit">add</button>
+      <button id="addBlogBtn" type="submit">
+        add
+      </button>
     </form>
   )
 }

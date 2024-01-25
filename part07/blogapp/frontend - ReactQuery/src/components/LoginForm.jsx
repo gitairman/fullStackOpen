@@ -1,45 +1,92 @@
-import PropTypes from 'prop-types'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { login } from '../services/login'
+import { useLoggedInDispatch } from '../loggedInContext'
+import { setToken } from '../services/blogs'
+import { useMessageDispatch } from '../NotificationContext'
 
-const LoginForm = ({
-  handleSubmit,
-  handleUsernameChange,
-  handlePasswordChange,
-  username,
-  password
-}) => {
+const LoginForm = () => {
+  const useField = (type, id) => {
+    const name = id
+    const placeholder = `write ${name} here`
+    const [value, setValue] = useState('')
+
+    const onChange = (e) => {
+      setValue(e.target.value)
+    }
+
+    const onReset = () => {
+      setValue('')
+    }
+
+    return {
+      id,
+      name,
+      placeholder,
+      type,
+      value,
+      onChange,
+      onReset,
+    }
+  }
+
+  const username = useField('text', 'username')
+  const password = useField('password', 'password')
+
+  const queryClient = useQueryClient()
+  const dispatchLogin = useLoggedInDispatch()
+  const dispatchMessage = useMessageDispatch()
+
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (loggedIn) => {
+      window.localStorage.setItem('loggedInUser', JSON.stringify(loggedIn))
+      setToken(loggedIn.token)
+      dispatchLogin(loggedIn)
+      username.onReset()
+      password.onReset()
+      dispatchMessage({
+        type: 'info',
+        message: `Successfully logged in with ${loggedIn.username}!`,
+      })
+      setTimeout(() => {
+        dispatchMessage(null)
+      }, 5000)
+    },
+    onError: (err) => {
+      dispatchMessage({ type: 'error', message: err.response.data.error })
+      setTimeout(() => {
+        dispatchMessage(null)
+      }, 5000)
+    },
+  })
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    console.log('logging in with', username, password)
+    loginMutation.mutate({
+      username: username.value,
+      password: password.value,
+    })
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleLogin}>
       <div>
         username:
-        <input
-          id="username"
-          type="text"
-          value={username}
-          name="Username"
-          onChange={handleUsernameChange}
-          placeholder='type username here' /><br />
+        <input {...username} />
+        <br />
       </div>
       <div>
         password:
-        <input
-          id="password"
-          type="password"
-          value={password}
-          name="Password"
-          onChange={handlePasswordChange}
-          placeholder='type password here' />
-      </div><br />
-      <button id="login-button" type="submit">login</button>
+        <input {...password} />
+      </div>
+      <br />
+      <button id="login-button" type="submit">
+        login
+      </button>
     </form>
   )
-}
-
-LoginForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-  handleUsernameChange: PropTypes.func.isRequired,
-  handlePasswordChange: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
 }
 
 export default LoginForm
