@@ -1,0 +1,57 @@
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "The milky way",
+    "author": "Aaron Hopkins",
+    "url": "https://themilkyway.hopkins",
+    "likes": "10"
+}
+
+###
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Why celebrities are famous",
+    "author": "Aaron Hopkins",
+    "url": "https://allthegoss.comedy",
+    "likes": "1000"
+}
+
+###
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+    "title": "The future of Society",
+    "author": "Aaron Hopkins",
+    "url": "https://allthegoss.comedy",
+    "likes": "50000"
+}
+
+### --- CREATING BLOG WITH USER ID
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFpcm1hbiIsImlkIjoiNjVhYTFmMzViNjI0MWQ1M2QwNGE0NGU1IiwiaWF0IjoxNzA1NjQ5NjY3fQ.WayzrWhTCYIQpA0lwcMzdOnH36nsLYZPCS6L4m2NYws
+
+
+{
+    "title": "authorized blog",
+    "author": "Aaron Hopkins",
+    "url": "https://allthegossip.comedy",
+    "likes": "50000"
+}
+
+### --- CREATING BLOG WITH USER ID
+POST http://localhost:3001/api/blogs HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvcGhpZWxvdSIsImlkIjoiNjVhYTJmZDM1MzZhMWEwMjU5ZmQ2YWIxIiwiaWF0IjoxNzA1Nzc4OTQyLCJleHAiOjE3MDU3ODI1NDJ9.hv2vWEDWFrXq02NMEDkqQOXCM_rRnvhbaX8GzHMGySA
+
+
+{
+    "title": "authorized blog 2",
+    "author": "Sophie Louise",
+    "url": "https://allthegos.comedy",
+    "likes": "50000"
+}
