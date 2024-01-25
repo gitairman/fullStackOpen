@@ -1,10 +1,9 @@
 import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectLoggedIn, setLoggedIn } from '../reducers/loggedInSlice'
+import { logoutUser, selectLoggedIn, setLoggedIn } from '../reducers/loggedInSlice'
 import LoginForm from './LoginForm'
 import BlogForm from './BlogForm'
 import Togglable from './Togglable'
-import { setNotification } from '../reducers/notificationSlice'
 
 const Forms = () => {
   const loggedIn = useSelector(selectLoggedIn)
@@ -13,13 +12,7 @@ const Forms = () => {
   const handleLogout = (e) => {
     e.preventDefault()
     window.localStorage.removeItem('loggedInUser')
-    dispatch(setLoggedIn(null))
-    dispatch(
-      setNotification({
-        type: 'info',
-        message: `${loggedIn.username} was successfully logged out!`,
-      })
-    )
+    dispatch(logoutUser(loggedIn))
   }
 
   const loginForm = () => (

@@ -10,9 +10,18 @@ export const notificationSlice = createSlice({
   },
 })
 
-export const setNotification = (message, time) => {
+export const setInfoNotification = (message) => {
   return async (dispatch) => {
-    dispatch(display(message))
+    dispatch(display({ type: 'info', message }))
+    setTimeout(() => {
+      dispatch(display(null))
+    }, 4000)
+  }
+}
+
+export const setErrorNotification = (message) => {
+  return async (dispatch) => {
+    dispatch(display({ type: 'error', message }))
     setTimeout(() => {
       dispatch(display(null))
     }, 4000)

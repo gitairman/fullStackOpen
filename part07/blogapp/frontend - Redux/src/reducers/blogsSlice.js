@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogsService from '../services/blogs'
+import { setInfoNotification } from './notificationSlice'
 
 const blogsSlice = createSlice({
   name: 'blogs',
@@ -38,6 +39,7 @@ export const createNew = (blog) => {
     const newBlog = await blogsService.create(blog)
     console.log(newBlog)
     dispatch(addNew(newBlog))
+    dispatch(setInfoNotification(`New blog '${newBlog.title}' was successfully added!`))
   }
 }
 

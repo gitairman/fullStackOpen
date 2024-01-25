@@ -3,29 +3,48 @@ import { createNew } from '../reducers/blogsSlice'
 import { useDispatch } from 'react-redux'
 
 const BlogForm = () => {
-  const initBlogState = {
-    title: '',
-    author: '',
-    url: '',
+  const useField = (type, id) => {
+    const name = id
+    const placeholder = `write ${name} here`
+    const [value, setValue] = useState('')
+
+    const onChange = (e) => {
+      setValue(e.target.value)
+    }
+
+    const onReset = () => {
+      setValue('')
+    }
+
+    return {
+      id,
+      name,
+      placeholder,
+      type,
+      value,
+      onChange,
+      onReset,
+    }
   }
 
   const dispatch = useDispatch()
 
-  const [newBlog, setNewBlog] = useState(initBlogState)
-
-  const handleBlogChange = ({ target }) => {
-    const name = target.getAttribute('name')
-    const newBlogObj = {}
-    newBlogObj[name] = target.value
-
-    setNewBlog({ ...newBlog, ...newBlogObj })
-  }
+  const title = useField('text', 'title')
+  const author = useField('text', 'author')
+  const url = useField('text', 'url')
 
   const addBlog = (e) => {
     e.preventDefault()
+    const newBlog = {
+      title: title.value,
+      author: author.value,
+      url: url.value,
+    }
     console.log(newBlog)
     dispatch(createNew(newBlog))
-    setNewBlog(initBlogState)
+    title.onReset()
+    author.onReset()
+    url.onReset()
   }
 
   return (
@@ -33,38 +52,17 @@ const BlogForm = () => {
       <h3 style={{ marginTop: 0 }}>Add New Blog</h3>
       <div>
         Title:
-        <input
-          id="title"
-          type="text"
-          value={newBlog.title}
-          name="title"
-          onChange={handleBlogChange}
-          placeholder="write title here"
-        />
+        <input {...title} />
       </div>
       <br />
       <div>
         Author:
-        <input
-          id="author"
-          type="text"
-          value={newBlog.author}
-          name="author"
-          onChange={handleBlogChange}
-          placeholder="write author here"
-        />
+        <input {...author} />
       </div>
       <br />
       <div>
         Url:
-        <input
-          id="url"
-          type="text"
-          value={newBlog.url}
-          name="url"
-          onChange={handleBlogChange}
-          placeholder="write url here"
-        />
+        <input {...url} />
       </div>
       <br />
 

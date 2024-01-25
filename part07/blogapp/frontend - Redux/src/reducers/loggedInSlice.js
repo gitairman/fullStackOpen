@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import loginService from '../services/login'
+import { setInfoNotification } from './notificationSlice'
 
 const loggedInSlice = createSlice({
   name: 'loggedIn',
@@ -13,8 +14,15 @@ const loggedInSlice = createSlice({
 
 export const loginUser = (user) => {
   return async (dispatch) => {
-    const loggedIn = await loginService.login(user)
-    dispatch(setLoggedIn(loggedIn))
+    dispatch(setLoggedIn(user))
+    dispatch(setInfoNotification(`${user.username} was successfully logged in!`))
+  }
+}
+
+export const logoutUser = (user) => {
+  return async (dispatch) => {
+    dispatch(setLoggedIn(null))
+    dispatch(setInfoNotification(`${user.username} was successfully logged out!`))
   }
 }
 
