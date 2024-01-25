@@ -1,15 +1,20 @@
-const Notification = ({ message }) => {
+import { useSelector } from 'react-redux'
+import { selectMessage } from '../reducers/notificationSlice'
+
+const Notification = () => {
+  const message = useSelector(selectMessage)
+
   const errorStyle = {
     color: 'red',
     padding: 10,
     margin: 10,
-    borderStyle: 'solid'
+    borderStyle: 'solid',
   }
   const infoStyle = {
     color: 'green',
     padding: 10,
     margin: 10,
-    borderStyle: 'solid'
+    borderStyle: 'solid',
   }
 
   if (message === null) {
@@ -17,7 +22,10 @@ const Notification = ({ message }) => {
   }
 
   return (
-    <div id='notification' style={message.type === 'info' ? infoStyle : errorStyle}>
+    <div
+      id="notification"
+      style={message.type === 'info' ? infoStyle : errorStyle}
+    >
       {message.message}
     </div>
   )

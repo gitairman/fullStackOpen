@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { removeBlog, updateBlog } from '../reducers/blogsSlice'
 
-const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
+const Blog = ({ blog, addedBy }) => {
+  const dispatch = useDispatch()
 
   const [blogDetails, setBlogDetails] = useState(false)
 
@@ -11,7 +13,7 @@ const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
     paddingLeft: 5,
     border: 'solid',
     borgerWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const handleLikeClick = (e) => {
@@ -21,24 +23,26 @@ const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
       likes: blog.likes + 1,
       author: blog.author,
       title: blog.title,
-      url: blog.url
+      url: blog.url,
     }
-    handleLike(blog.id, updatedBlog)
+    dispatch(updateBlog(blog.id, updatedBlog))
   }
 
   const handleDeleteClick = (e) => {
     e.preventDefault()
-    if (window.confirm(`Are you sure you want to DELETE blog post ${blog.title} by ${blog.author}?`)) {
-      handleDelete(blog.id)
+    if (
+      window.confirm(
+        `Are you sure you want to DELETE blog post ${blog.title} by ${blog.author}?`
+      )
+    ) {
+      dispatch(removeBlog(blog.id))
     }
   }
 
   const deleteBtn = () => {
     if (addedBy !== null) {
       if (blog.user.username === addedBy.username) {
-        return (
-          <button onClick={handleDeleteClick}>delete blog</button>
-        )
+        return <button onClick={handleDeleteClick}>delete blog</button>
       }
     }
   }
@@ -46,18 +50,27 @@ const Blog = ({ blog, handleLike, handleDelete, addedBy }) => {
   const blogDeets = () => (
     <>
       <strong>Url:</strong> {blog.url} <br />
-      <strong>Likes:</strong> <span className='likes'>{blog.likes}</span> <button onClick={handleLikeClick}>like</button><br />
-      <strong>Added by User:</strong> {'user' in blog && blog.user.username}<br />
+      <strong>Likes:</strong> <span className="likes">{blog.likes}</span>{' '}
+      <button onClick={handleLikeClick}>like</button>
+      <br />
+      <strong>Added by User:</strong> {'user' in blog && blog.user.username}
+      <br />
       {deleteBtn()}
     </>
   )
 
   return (
-    <div style={blogStyle} className='blog'>
-      <strong>Title:</strong> {blog.title} <button className='blogDetails' onClick={() => setBlogDetails(!blogDetails)}>{blogDetails ? 'hide' : 'view'}</button><br />
+    <div style={blogStyle} className="blog">
+      <strong>Title:</strong> {blog.title}{' '}
+      <button
+        className="blogDetails"
+        onClick={() => setBlogDetails(!blogDetails)}
+      >
+        {blogDetails ? 'hide' : 'view'}
+      </button>
+      <br />
       <strong>Author:</strong> {blog.author} <br />
       {blogDetails && blogDeets()}
-
     </div>
   )
 }

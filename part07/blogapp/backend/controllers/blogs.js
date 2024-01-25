@@ -81,6 +81,9 @@ blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, 
     return res.status(401).json({ error: 'blog can only be deleted by user who created it!' })
   }
 
+  user.blogs = user.blogs.filter(id => id.toString() !== req.params.id)
+  await user.save()
+
   await Blog.findByIdAndDelete(req.params.id)
   res.status(204).end()
 })

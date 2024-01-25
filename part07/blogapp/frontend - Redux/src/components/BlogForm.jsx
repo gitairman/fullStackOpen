@@ -1,12 +1,15 @@
 import { useState } from 'react'
+import { createNew } from '../reducers/blogsSlice'
+import { useDispatch } from 'react-redux'
 
-
-const BlogForm = ({ createBlog }) => {
+const BlogForm = () => {
   const initBlogState = {
     title: '',
     author: '',
     url: '',
   }
+
+  const dispatch = useDispatch()
 
   const [newBlog, setNewBlog] = useState(initBlogState)
 
@@ -20,13 +23,14 @@ const BlogForm = ({ createBlog }) => {
 
   const addBlog = (e) => {
     e.preventDefault()
-    createBlog(newBlog)
+    console.log(newBlog)
+    dispatch(createNew(newBlog))
     setNewBlog(initBlogState)
   }
 
   return (
     <form onSubmit={addBlog}>
-      <h3 style={{ marginTop: 0 }} >Add New Blog</h3>
+      <h3 style={{ marginTop: 0 }}>Add New Blog</h3>
       <div>
         Title:
         <input
@@ -35,9 +39,10 @@ const BlogForm = ({ createBlog }) => {
           value={newBlog.title}
           name="title"
           onChange={handleBlogChange}
-          placeholder='write title here'
+          placeholder="write title here"
         />
-      </div><br />
+      </div>
+      <br />
       <div>
         Author:
         <input
@@ -46,9 +51,10 @@ const BlogForm = ({ createBlog }) => {
           value={newBlog.author}
           name="author"
           onChange={handleBlogChange}
-          placeholder='write author here'
+          placeholder="write author here"
         />
-      </div><br />
+      </div>
+      <br />
       <div>
         Url:
         <input
@@ -57,11 +63,14 @@ const BlogForm = ({ createBlog }) => {
           value={newBlog.url}
           name="url"
           onChange={handleBlogChange}
-          placeholder='write url here'
+          placeholder="write url here"
         />
-      </div><br />
+      </div>
+      <br />
 
-      <button id='addBlogBtn' type="submit">add</button>
+      <button id="addBlogBtn" type="submit">
+        add
+      </button>
     </form>
   )
 }

@@ -1,14 +1,45 @@
-import PropTypes from 'prop-types'
+import { useState } from 'react'
+import loginService from '../services/login'
+import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { setLoggedIn } from '../reducers/loggedInSlice'
+import { setNotification } from '../reducers/notificationSlice'
 
-const LoginForm = ({
-  handleSubmit,
-  handleUsernameChange,
-  handlePasswordChange,
-  username,
-  password
-}) => {
+const LoginForm = () => {
+  const dispatch = useDispatch()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    console.log('logging in with', username, password)
+
+    try {
+      const user = await loginService.login({
+        username,
+        password,
+      })
+      window.localStorage.setItem('loggedInUser', JSON.stringify(user))
+      blogService.setToken(user.token)
+      dispatch(setLoggedIn(user))
+      setUsername('')
+      setPassword('')
+      dispatch(
+        setNotification({
+          type: 'info',
+          message: `Successfully logged in with ${username}!`,
+        })
+      )
+    } catch (err) {
+      console.log(err)
+      dispatch(
+        setNotification({ type: 'error', message: err.response.data.error })
+      )
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleLogin}>
       <div>
         username:
         <input
@@ -16,8 +47,10 @@ const LoginForm = ({
           type="text"
           value={username}
           name="Username"
-          onChange={handleUsernameChange}
-          placeholder='type username here' /><br />
+          onChange={({ target }) => setUsername(target.value)}
+          placeholder="type username here"
+        />
+        <br />
       </div>
       <div>
         password:
@@ -26,20 +59,16 @@ const LoginForm = ({
           type="password"
           value={password}
           name="Password"
-          onChange={handlePasswordChange}
-          placeholder='type password here' />
-      </div><br />
-      <button id="login-button" type="submit">login</button>
+          onChange={({ target }) => setPassword(target.value)}
+          placeholder="type password here"
+        />
+      </div>
+      <br />
+      <button id="login-button" type="submit">
+        login
+      </button>
     </form>
   )
-}
-
-LoginForm.propTypes = {
-  handleSubmit: PropTypes.func.isRequired,
-  handleUsernameChange: PropTypes.func.isRequired,
-  handlePasswordChange: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
 }
 
 export default LoginForm
