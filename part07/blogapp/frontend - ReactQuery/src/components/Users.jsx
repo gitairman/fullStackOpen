@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { getAllUsers } from '../services/users'
 import { Link } from 'react-router-dom'
 import { useUsers, useUsersDispatch } from '../usersContext'
 
-const Users = () => {
+const Users = memo(() => {
   const users = useUsers()
   const dispatch = useUsersDispatch()
 
@@ -35,6 +35,8 @@ const Users = () => {
       </table>
     </div>
   )
-}
+})
+
+Users.displayName = 'Users'
 
 export default Users

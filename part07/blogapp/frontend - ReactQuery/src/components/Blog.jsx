@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react'
+import { memo, useEffect } from 'react'
 import { useLoggedIn } from '../loggedInContext'
 import { useMutation } from '@tanstack/react-query'
 import { deleteBlog, getAll, update } from '../services/blogs'
 import { useBlogsDispatch } from '../blogsContext'
 import { useMessageDispatch } from '../NotificationContext'
 import { useUsersDispatch } from '../usersContext'
-import { getAllUsers } from '../services/users'
 import Comments from './Comments'
 
-const Blog = ({ blog, details }) => {
+const Blog = memo(({ blog, details }) => {
   const dispatchBlogs = useBlogsDispatch()
   const dispatchUsers = useUsersDispatch()
 
@@ -17,14 +16,7 @@ const Blog = ({ blog, details }) => {
       const initialBlogs = await getAll()
       dispatchBlogs({ type: 'set', payload: initialBlogs })
     })()
-  }, [dispatchBlogs])
-
-  useEffect(() => {
-    (async () => {
-      const initialUsers = await getAllUsers()
-      dispatchUsers({ type: 'set', payload: initialUsers })
-    })()
-  }, [dispatchUsers])
+  }, [])
 
   const loggedIn = useLoggedIn()
   const dispatchMessage = useMessageDispatch()
@@ -142,6 +134,8 @@ const Blog = ({ blog, details }) => {
       </dl>
     </div>
   )
-}
+})
+
+Blog.displayName = 'Blog'
 
 export default Blog

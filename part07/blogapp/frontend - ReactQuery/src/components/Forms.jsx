@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { useLoggedIn, useLoggedInDispatch } from '../loggedInContext'
 import LoginForm from './LoginForm'
 import Togglable from './Togglable'
@@ -6,7 +6,7 @@ import BlogForm from './BlogForm'
 import { useMessageDispatch } from '../NotificationContext'
 import { setToken } from '../services/blogs'
 
-const Forms = () => {
+const Forms = memo(() => {
   const loggedIn = useLoggedIn()
   const dispatchLogin = useLoggedInDispatch()
   const dispatchMessage = useMessageDispatch()
@@ -63,6 +63,8 @@ const Forms = () => {
       )}
     </div>
   )
-}
+})
+
+Forms.displayName = 'Forms'
 
 export default Forms

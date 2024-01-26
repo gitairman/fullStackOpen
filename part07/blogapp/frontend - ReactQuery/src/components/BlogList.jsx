@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useMemo, useRef } from 'react'
 import { useBlogs, useBlogsDispatch } from '../blogsContext'
 import { getAll } from '../services/blogs'
 import Blog from './Blog'
@@ -7,18 +7,18 @@ import BlogForm from './BlogForm'
 import Togglable from './Togglable'
 import { useLoggedIn } from '../loggedInContext'
 
-const BlogList = () => {
+const BlogList = memo(() => {
   const blogs = useBlogs()
   const dispatchBlogs = useBlogsDispatch()
   const loggedIn = useLoggedIn()
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       const initialBlogs = await getAll()
       initialBlogs.sort((a, b) => b.likes - a.likes)
       dispatchBlogs({ type: 'set', payload: initialBlogs })
     })()
-  }, [dispatchBlogs])
+  }, [])
 
   const blogFormRef = useRef()
 
@@ -37,6 +37,8 @@ const BlogList = () => {
       ))}
     </div>
   )
-}
+})
+
+BlogList.displayName = 'BlogList'
 
 export default BlogList

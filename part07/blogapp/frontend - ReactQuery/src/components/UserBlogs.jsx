@@ -1,22 +1,15 @@
 import { Link, useParams } from 'react-router-dom'
 import { useUsers, useUsersDispatch } from '../usersContext'
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { getAllUsers } from '../services/users'
 import { useBlogs, useBlogsDispatch } from '../blogsContext'
 import { getAll } from '../services/blogs'
 import { useQuery } from '@tanstack/react-query'
 
-const UserBlogs = ({ user }) => {
+const UserBlogs = memo(({ user }) => {
   const blogs = useBlogs()
   const dispatchBlogs = useBlogsDispatch()
   const dispatchUsers = useUsersDispatch()
-
-  useEffect(() => {
-    (async () => {
-      const initialBlogs = await getAll()
-      dispatchBlogs({ type: 'set', payload: initialBlogs })
-    })()
-  }, [dispatchBlogs])
 
   useEffect(() => {
     (async () => {
@@ -42,6 +35,8 @@ const UserBlogs = ({ user }) => {
       </ul>
     </div>
   )
-}
+})
+
+UserBlogs.displayName = 'UserBlogs'
 
 export default UserBlogs

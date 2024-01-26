@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { create } from '../services/blogs'
 import { useMessageDispatch } from '../NotificationContext'
 import { useBlogsDispatch } from '../blogsContext'
 
-const BlogForm = () => {
+const BlogForm = memo(() => {
   const useField = (type, id) => {
     const name = id
     const placeholder = `write ${name} here`
@@ -83,6 +83,8 @@ const BlogForm = () => {
       </button>
     </form>
   )
-}
+})
+
+BlogForm.displayName = 'BlogForm'
 
 export default BlogForm

@@ -9,8 +9,11 @@ import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Menu from './components/Menu'
 import Home from './components/Home'
+import { memo } from 'react'
 
-const App = () => {
+const App = memo(() => {
+
+  console.log('hello')
 
   const users = useUsers()
   const userMatch = useMatch('/users/:id')
@@ -39,6 +42,8 @@ const App = () => {
       </div>
     </div>
   )
-}
+})
+
+App.displayName = 'App'
 
 export default App

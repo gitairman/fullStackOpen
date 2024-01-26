@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { memo, useEffect } from 'react'
 import { useMessage } from '../NotificationContext'
 import { useMessageDispatch } from '../NotificationContext'
 
-const Notification = () => {
+const Notification = memo(() => {
   const message = useMessage()
   const dispatchMessage = useMessageDispatch()
 
@@ -30,6 +30,8 @@ const Notification = () => {
       {message.message}
     </div>
   )
-}
+})
+
+Notification.displayName = 'Notification'
 
 export default Notification
