@@ -44,15 +44,9 @@ const BlogForm = () => {
         type: 'info',
         message: `New blog '${createdBlog.title}' has just been added`,
       })
-      setTimeout(() => {
-        dispatchMessage(null)
-      }, 5000)
     },
     onError: (err) => {
       dispatchMessage({ type: 'error', message: err.response.data.error })
-      setTimeout(() => {
-        dispatchMessage(null)
-      }, 5000)
     },
   })
 
@@ -72,22 +66,18 @@ const BlogForm = () => {
   return (
     <form onSubmit={addBlog}>
       <h3 style={{ marginTop: 0 }}>Add New Blog</h3>
-      <div>
-        Title:
-        <input {...title} />
-      </div>
+      <label htmlFor="title">Title:</label>
       <br />
-      <div>
-        Author:
-        <input {...author} />
-      </div>
+      <input {...title} />
       <br />
-      <div>
-        Url:
-        <input {...url} />
-      </div>
+      <label htmlFor="author">Author:</label>
       <br />
-
+      <input {...author} />
+      <br />
+      <label htmlFor="url">Url:</label>
+      <br />
+      <input {...url} />
+      <br />
       <button id="addBlogBtn" type="submit">
         add
       </button>

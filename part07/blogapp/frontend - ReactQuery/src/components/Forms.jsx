@@ -1,14 +1,24 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLoggedIn, useLoggedInDispatch } from '../loggedInContext'
 import LoginForm from './LoginForm'
 import Togglable from './Togglable'
 import BlogForm from './BlogForm'
 import { useMessageDispatch } from '../NotificationContext'
+import { setToken } from '../services/blogs'
 
 const Forms = () => {
   const loggedIn = useLoggedIn()
   const dispatchLogin = useLoggedInDispatch()
   const dispatchMessage = useMessageDispatch()
+
+  useEffect(() => {
+    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
+    if (loggedInUserJSON) {
+      const user = JSON.parse(loggedInUserJSON)
+      setToken(user.token)
+      dispatchLogin(user)
+    }
+  }, [dispatchLogin])
 
   const handleLogout = (e) => {
     e.preventDefault()

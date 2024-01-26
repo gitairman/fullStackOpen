@@ -7,10 +7,12 @@ const Notification = () => {
   const dispatchMessage = useMessageDispatch()
 
   useEffect(() => {
-    setTimeout(() => {
-      dispatchMessage(null)
-    }, 5000)
-  }, [dispatchMessage, message])
+    if (message !== null) {
+      setTimeout(() => {
+        dispatchMessage(null)
+      }, 3000)
+    }
+  }, [message])
 
   if (message === null) {
     return null

@@ -1,21 +1,34 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLoggedIn } from '../loggedInContext'
 import { useMutation } from '@tanstack/react-query'
-import { deleteBlog, update } from '../services/blogs'
+import { deleteBlog, getAll, update } from '../services/blogs'
 import { useBlogsDispatch } from '../blogsContext'
 import { useMessageDispatch } from '../NotificationContext'
+import { useUsersDispatch } from '../usersContext'
+import { getAllUsers } from '../services/users'
 
-const Blog = ({ blog }) => {
-  const loggedIn = useLoggedIn()
-
+const Blog = ({ blog, details }) => {
   const dispatchBlogs = useBlogsDispatch()
+  const dispatchUsers = useUsersDispatch()
+
+  useEffect(() => {
+    (async () => {
+      const initialBlogs = await getAll()
+      dispatchBlogs({ type: 'set', payload: initialBlogs })
+    })()
+  }, [dispatchBlogs])
+
+  useEffect(() => {
+    (async () => {
+      const initialUsers = await getAllUsers()
+      dispatchUsers({ type: 'set', payload: initialUsers })
+    })()
+  }, [dispatchUsers])
+
+  const loggedIn = useLoggedIn()
   const dispatchMessage = useMessageDispatch()
 
-  const [blogDetails, setBlogDetails] = useState(false)
-
   const blogStyle = {
-    paddingTop: 5,
-    paddingBottom: 5,
     paddingLeft: 5,
     border: 'solid',
     borgerWidth: 1,
@@ -82,30 +95,45 @@ const Blog = ({ blog }) => {
     }
   }
 
-  const blogDeets = () => (
+  const showDetails = () => (
     <>
-      <strong>Url:</strong> {blog.url} <br />
-      <strong>Likes:</strong> <span className="likes">{blog.likes}</span>{' '}
-      <button onClick={handleLikeClick}>like</button>
-      <br />
-      <strong>Added by User:</strong> {'user' in blog && blog.user.username}
-      <br />
-      {deleteBtn()}
+      <dt>
+        <strong>Author:</strong>
+      </dt>{' '}
+      <dd>{blog.author}</dd>
+      <dt>
+        <strong>Url:</strong>
+      </dt>{' '}
+      <dd>{blog.url}</dd>
+      <dt>
+        <strong>Likes:</strong>
+      </dt>{' '}
+      <dd>
+        <span className="likes">{blog.likes}</span>
+        <button onClick={handleLikeClick}>like</button>
+      </dd>
+      <dt>
+        <strong>Added by User:</strong>{' '}
+      </dt>
+      <dd>{'user' in blog && blog.user.username}</dd>
     </>
   )
 
+  if (!blog) {
+    return null
+  }
+
   return (
     <div style={blogStyle} className="blog">
-      <strong>Title:</strong> {blog.title}{' '}
-      <button
-        className="blogDetails"
-        onClick={() => setBlogDetails(!blogDetails)}
-      >
-        {blogDetails ? 'hide' : 'view'}
-      </button>
-      <br />
-      <strong>Author:</strong> {blog.author} <br />
-      {blogDetails && blogDeets()}
+      <dl>
+        <dt>
+          <strong>Title:</strong>
+        </dt>
+        <dd style={ details ? { fontSize: 30 } : { fontSize: 18 }}>{blog.title}</dd>
+        {details && showDetails()}<br />
+        {deleteBtn()}
+      </dl>
+      <Comments blog={blog}/>
     </div>
   )
 }

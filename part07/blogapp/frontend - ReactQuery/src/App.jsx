@@ -1,38 +1,43 @@
-import { useEffect } from 'react'
 import Notification from './components/Notification'
-import { getAll, setToken, update } from './services/blogs'
-import { useBlogsDispatch } from './blogsContext'
-import { useLoggedInDispatch } from './loggedInContext'
 import BlogList from './components/BlogList'
 import Forms from './components/Forms'
+import { Routes, Route, Link, useMatch } from 'react-router-dom'
+import Users from './components/Users'
+import BlogForm from './components/BlogForm'
+import UserBlogs from './components/UserBlogs'
+import { useUsers } from './usersContext'
+import { useBlogs } from './blogsContext'
+import Blog from './components/Blog'
+import LoginForm from './components/LoginForm'
+import Menu from './components/Menu'
+import Home from './components/Home'
 
 const App = () => {
-  const dispatchBlogs = useBlogsDispatch()
-  const dispatchLogin = useLoggedInDispatch()
+  const users = useUsers()
+  const userMatch = useMatch('/users/:id')
+  const user = userMatch ? users.find((user) => user.id === userMatch.params.id) : null
 
-  useEffect(() => {
-    (async () => {
-      const initialBlogs = await getAll()
-      initialBlogs.sort((a, b) => b.likes - a.likes)
-      dispatchBlogs({ type: 'set', payload: initialBlogs })
-    })()
-  }, [dispatchBlogs])
-
-  useEffect(() => {
-    const loggedInUserJSON = window.localStorage.getItem('loggedInUser')
-    if (loggedInUserJSON) {
-      const user = JSON.parse(loggedInUserJSON)
-      setToken(user.token)
-      dispatchLogin(user)
-    }
-  }, [dispatchLogin])
+  const blogs = useBlogs()
+  const blogMatch = useMatch('/blogs/:id')
+  const blog = blogMatch ? blogs.find((blog) => blog.id === blogMatch.params.id) : null
 
   return (
     <div>
-      <h2>blogs</h2>
+      <Menu />
+      <h1>Blog App</h1>
       <Notification />
-      <Forms />
-      <BlogList />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<UserBlogs user={user} />} />
+        <Route path="/blogs" element={<BlogList />} />
+        <Route path="/blogs/:id" element={<Blog blog={blog} details={true} />} />
+        <Route path="/login" element={<LoginForm />} />
+      </Routes>
+
+      <div style={{ marginTop: 20 }}>
+        <i>Blog App, Department of Aaron Hopkins 2024</i>
+      </div>
     </div>
   )
 }

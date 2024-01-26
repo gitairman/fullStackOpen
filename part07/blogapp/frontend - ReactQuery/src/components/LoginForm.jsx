@@ -4,8 +4,10 @@ import { login } from '../services/login'
 import { useLoggedInDispatch } from '../loggedInContext'
 import { setToken } from '../services/blogs'
 import { useMessageDispatch } from '../NotificationContext'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
+  const navigate = useNavigate()
   const useField = (type, id) => {
     const name = id
     const placeholder = `write ${name} here`
@@ -48,15 +50,10 @@ const LoginForm = () => {
         type: 'info',
         message: `Successfully logged in with ${loggedIn.username}!`,
       })
-      setTimeout(() => {
-        dispatchMessage(null)
-      }, 5000)
+      navigate('/')
     },
     onError: (err) => {
       dispatchMessage({ type: 'error', message: err.response.data.error })
-      setTimeout(() => {
-        dispatchMessage(null)
-      }, 5000)
     },
   })
 

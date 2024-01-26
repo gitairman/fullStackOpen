@@ -45,7 +45,7 @@ blogsRouter.post('/', middleware.tokenExtractor, middleware.userExtractor, async
 
 })
 
-blogsRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, async (req, res) => {
+blogsRouter.put('/:id', async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
   if (!blog) {
@@ -53,10 +53,6 @@ blogsRouter.put('/:id', middleware.tokenExtractor, middleware.userExtractor, asy
   }
 
   const user = req.user
-
-  if (blog.user.toString() !== user._id.toString()) {
-    return res.status(401).json({ error: 'blog can only be updated by user who created it!' })
-  }
 
   const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('user', {
     username: 1,
