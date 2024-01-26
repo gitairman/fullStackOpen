@@ -6,6 +6,7 @@ import { useBlogsDispatch } from '../blogsContext'
 import { useMessageDispatch } from '../NotificationContext'
 import { useUsersDispatch } from '../usersContext'
 import { getAllUsers } from '../services/users'
+import Comments from './Comments'
 
 const Blog = ({ blog, details }) => {
   const dispatchBlogs = useBlogsDispatch()
@@ -116,6 +117,9 @@ const Blog = ({ blog, details }) => {
         <strong>Added by User:</strong>{' '}
       </dt>
       <dd>{'user' in blog && blog.user.username}</dd>
+      <div style={{ marginTop: 50 }}>
+        <Comments blog={blog} />
+      </div>
     </>
   )
 
@@ -129,11 +133,13 @@ const Blog = ({ blog, details }) => {
         <dt>
           <strong>Title:</strong>
         </dt>
-        <dd style={ details ? { fontSize: 30 } : { fontSize: 18 }}>{blog.title}</dd>
-        {details && showDetails()}<br />
+        <dd style={details ? { fontSize: 30 } : { fontSize: 18 }}>
+          {blog.title}
+        </dd>
+        {details && showDetails()}
+        <br />
         {deleteBtn()}
       </dl>
-      <Comments blog={blog}/>
     </div>
   )
 }

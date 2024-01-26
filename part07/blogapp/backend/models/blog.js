@@ -24,12 +24,14 @@ const blogSchema = new mongoose.Schema({
   comments: [
     {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
+        ref: 'Comment',
+        autopopulate: true
     }
 ]
 }, { versionKey: false })
 
 blogSchema.plugin(uniqueValidator)
+blogSchema.plugin(require('mongoose-autopopulate'))
 
 blogSchema.set('toJSON', {
   transform: (document, returnedObj) => {

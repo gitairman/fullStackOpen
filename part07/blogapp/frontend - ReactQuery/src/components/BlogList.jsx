@@ -13,7 +13,7 @@ const BlogList = () => {
   const loggedIn = useLoggedIn()
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       const initialBlogs = await getAll()
       initialBlogs.sort((a, b) => b.likes - a.likes)
       dispatchBlogs({ type: 'set', payload: initialBlogs })

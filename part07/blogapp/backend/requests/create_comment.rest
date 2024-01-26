@@ -1,0 +1,15 @@
+POST http://localhost:3001/api/blogs/65ac1f2afb37bb34cfe29615/comments HTTP/1.1
+content-type: application/json
+
+{
+    "comment": "this is the first comment attempt"
+}
+
+###
+
+POST http://localhost:3001/api/blogs/65ac1f2afb37bb34cfe29615/comments HTTP/1.1
+content-type: application/json
+
+{
+    "comment": "this is the second comment attempt"
+}

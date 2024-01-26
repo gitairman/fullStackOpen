@@ -1,9 +1,7 @@
 import Notification from './components/Notification'
 import BlogList from './components/BlogList'
-import Forms from './components/Forms'
 import { Routes, Route, Link, useMatch } from 'react-router-dom'
 import Users from './components/Users'
-import BlogForm from './components/BlogForm'
 import UserBlogs from './components/UserBlogs'
 import { useUsers } from './usersContext'
 import { useBlogs } from './blogsContext'
@@ -13,6 +11,7 @@ import Menu from './components/Menu'
 import Home from './components/Home'
 
 const App = () => {
+
   const users = useUsers()
   const userMatch = useMatch('/users/:id')
   const user = userMatch ? users.find((user) => user.id === userMatch.params.id) : null
