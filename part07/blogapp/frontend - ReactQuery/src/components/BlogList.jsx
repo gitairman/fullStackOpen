@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { useBlogs, useBlogsDispatch } from '../blogsContext'
 import { getAll } from '../services/blogs'
 import Blog from './Blog'

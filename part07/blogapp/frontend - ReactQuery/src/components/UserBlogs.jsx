@@ -1,14 +1,10 @@
-import { Link, useParams } from 'react-router-dom'
-import { useUsers, useUsersDispatch } from '../usersContext'
+import { Link } from 'react-router-dom'
+import { useUsersDispatch } from '../usersContext'
 import { memo, useEffect } from 'react'
 import { getAllUsers } from '../services/users'
 import { useBlogs, useBlogsDispatch } from '../blogsContext'
-import { getAll } from '../services/blogs'
-import { useQuery } from '@tanstack/react-query'
 
 const UserBlogs = memo(({ user }) => {
-  const blogs = useBlogs()
-  const dispatchBlogs = useBlogsDispatch()
   const dispatchUsers = useUsersDispatch()
 
   useEffect(() => {

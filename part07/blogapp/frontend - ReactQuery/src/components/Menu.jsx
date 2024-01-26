@@ -3,7 +3,7 @@ import { useLoggedIn, useLoggedInDispatch } from '../loggedInContext'
 import { useMessageDispatch } from '../NotificationContext'
 import { memo, useEffect } from 'react'
 import { setToken } from '../services/blogs'
-import { Navbar, NavLink, Nav } from 'react-bootstrap'
+import { Navbar, NavLink } from 'react-bootstrap'
 
 const Menu = memo(() => {
   const user = useLoggedIn()
