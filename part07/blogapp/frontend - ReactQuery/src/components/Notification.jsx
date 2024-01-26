@@ -1,6 +1,7 @@
 import { memo, useEffect } from 'react'
 import { useMessage } from '../NotificationContext'
 import { useMessageDispatch } from '../NotificationContext'
+import { Alert } from 'react-bootstrap'
 
 const Notification = memo(() => {
   const message = useMessage()
@@ -22,12 +23,12 @@ const Notification = memo(() => {
     color: message.type === 'info' ? 'green' : 'red',
     padding: 10,
     margin: 10,
-    borderStyle: 'solid',
+    // borderStyle: 'solid',
   }
 
   return (
-    <div id="notification" style={style}>
-      {message.message}
+    <div className='container' id="notification" style={style}>
+      <Alert variant={message.type === 'info' ? 'success' : 'failure'}>{message.message}</Alert>
     </div>
   )
 })

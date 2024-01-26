@@ -13,8 +13,6 @@ import { memo } from 'react'
 
 const App = memo(() => {
 
-  console.log('hello')
-
   const users = useUsers()
   const userMatch = useMatch('/users/:id')
   const user = userMatch ? users.find((user) => user.id === userMatch.params.id) : null
@@ -24,7 +22,7 @@ const App = memo(() => {
   const blog = blogMatch ? blogs.find((blog) => blog.id === blogMatch.params.id) : null
 
   return (
-    <div>
+    <div className='container'>
       <Menu />
       <h1>Blog App</h1>
       <Notification />
