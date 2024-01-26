@@ -28,7 +28,7 @@ const Notification = memo(() => {
 
   return (
     <div className='container' id="notification" style={style}>
-      <Alert variant={message.type === 'info' ? 'success' : 'failure'}>{message.message}</Alert>
+      <Alert variant={message.type === 'info' ? 'success' : 'danger'}>{message.message}</Alert>
     </div>
   )
 })

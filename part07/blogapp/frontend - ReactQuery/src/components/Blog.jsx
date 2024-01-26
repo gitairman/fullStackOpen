@@ -34,7 +34,9 @@ const Blog = memo(({ blog, details }) => {
       dispatchBlogs({ type: 'update', payload: updatedBlog })
       dispatchMessage({
         type: 'info',
-        message: `'${updatedBlog.title} by ${updatedBlog.author}' was LIKED by ${loggedIn ? loggedIn.username : 'Anonymous'}!`,
+        message: `'${updatedBlog.title} by ${
+          updatedBlog.author
+        }' was LIKED by ${loggedIn ? loggedIn.username : 'Anonymous'}!`,
       })
     },
     onError: (err) => {
@@ -103,7 +105,9 @@ const Blog = memo(({ blog, details }) => {
       </dt>{' '}
       <dd>
         <span className="likes">{blog.likes}</span>
-        <button style={{marginLeft: 10}}onClick={handleLikeClick}>like</button>
+        <button style={{ marginLeft: 10 }} onClick={handleLikeClick}>
+          like
+        </button>
       </dd>
       <dt>
         <strong>Added by User:</strong>{' '}

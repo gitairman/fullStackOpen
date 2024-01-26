@@ -68,7 +68,10 @@ const Menu = memo(() => {
         </Link>
       )} */}
 
-      <Navbar className="navbar navbar-light" style={{backgroundColor: '#e3f2fd'}}>
+      <Navbar
+        className="navbar navbar-light"
+        style={{ backgroundColor: '#e3f2fd' }}
+      >
         <NavLink className="navbar-brand" href="#">
           Navbar
         </NavLink>
