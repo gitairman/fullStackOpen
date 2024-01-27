@@ -1,0 +1,18 @@
+{
+  "name": "graphql-library-backend",
+  "version": "1.0.0",
+  "description": "practice for graphql",
+  "main": "library-backend.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "graphql"
+  ],
+  "author": "Aaron Hopkins",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "graphql": "^16.8.1"
+  }
+}

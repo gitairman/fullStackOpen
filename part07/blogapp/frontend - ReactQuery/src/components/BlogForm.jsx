@@ -1,33 +1,11 @@
-import { memo, useState } from 'react'
+import { memo } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { create } from '../services/blogs'
 import { useMessageDispatch } from '../NotificationContext'
 import { useBlogsDispatch } from '../blogsContext'
+import { useField } from '../utils/customHooks'
 
 const BlogForm = memo(() => {
-  const useField = (type, id) => {
-    const name = id
-    const placeholder = `write ${name} here`
-    const [value, setValue] = useState('')
-
-    const onChange = (e) => {
-      setValue(e.target.value)
-    }
-
-    const onReset = () => {
-      setValue('')
-    }
-
-    return {
-      id,
-      name,
-      placeholder,
-      type,
-      value,
-      onChange,
-      onReset,
-    }
-  }
 
   const title = useField('text', 'title')
   const author = useField('text', 'author')
