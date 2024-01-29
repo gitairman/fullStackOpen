@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/client'
 import { useEffect, useState } from 'react'
-import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK } from '../queries'
+import { ALL_AUTHORS, ALL_BOOKS, CREATE_BOOK, FILTERED_BOOKS } from '../queries'
 import { useField } from './customHooks'
 
-const NewBook = ({show}) => {
+const NewBook = ({show }) => {
   const title = useField('text', 'title')
   const author = useField('text', 'author')
   const published = useField('number', 'published')
@@ -16,11 +16,21 @@ const NewBook = ({show}) => {
   }, [show])
 
   const [createBook] = useMutation(CREATE_BOOK, {
+    onCompleted: (result) => {console.log(result)},
     onError: (err) => {
       console.log(err.message)
       setMessage({type: false, message: err.message + ', please log in'})
     },
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    // update: (cache, res) => {
+    //   cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+    //     console.log(res)
+    //     return {
+    //       allBooks: [...allBooks, res.data.addBook],
+    //     }
+    //   })
+    // },
+    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }, { query: FILTERED_BOOKS, variables: {genre: genres.join(',')} } ],
+    awaitRefetchQueries: true
   })
 
   if (!show) {

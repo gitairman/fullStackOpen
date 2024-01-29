@@ -12,10 +12,10 @@ const App = memo(() => {
 
   useEffect(() => {
     const userToken = window.localStorage.getItem('library-user-token')
-    if (userToken) {
+    if (userToken && token === null) {
       setToken(userToken)
     } 
-  }, [])
+  }, [token])
 
   const logout = () => {
     setToken(null)
@@ -35,7 +35,7 @@ const App = memo(() => {
 
       <Authors show={page === 'authors'} token={token} />
 
-      <Books show={page === 'books'} token={token}/>
+      <Books show={page === 'books'} token={token} />
 
       <NewBook show={page === 'add'} />
 
