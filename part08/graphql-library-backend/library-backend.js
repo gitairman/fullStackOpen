@@ -178,16 +178,14 @@ const typeDefs = `
 const resolvers = {
   Query: {
     bookCount: async () => Book.collection.countDocuments(),
-    authorCount: async () => Author.collection.countDocuments,
+    authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      console.log(args)
       let books = null
       let booksToFind = {}
       if ('author' in args && !('genre' in args)) {
         const [authorFound] = await Author.find({
           $text: { $search: args.author },
         })
-        console.log(authorFound)
         if (authorFound) {
           booksToFind['author'] = authorFound._id
           books = await Book.find(booksToFind)
@@ -210,18 +208,17 @@ const resolvers = {
       } else {
         books = await Book.find()
       }
+      console.log(books)
       return books
     },
     allAuthors: async () => Author.find(),
     me: (root, args, context) => {
-      console.log(context)
-      console.log(context.currentUser)
       return context.currentUser
     },
   },
   Author: {
     bookCount: async (root) => {
-      const books = await Book.find({ author: root.name })
+      const books = await Book.find({ author: root._id })
       return books.length
     },
   },
@@ -243,13 +240,10 @@ const resolvers = {
       } else authorId = authorExists._id
 
       const genres = args.genres
-      console.log(genres)
       delete args.genres
       const newBook = new Book({ ...args, author: authorId })
-      console.log(newBook)
       try {
         genres.forEach((genre, idx) => (newBook.genres[idx] = genre))
-        console.log(newBook)
         await newBook.save()
       } catch (err) {
         throw new GraphQLError('Saving book failed', {
@@ -290,7 +284,6 @@ const resolvers = {
       }
     },
     createUser: async (root, args) => {
-      console.log(args)
       const user = new User({
         username: args.username,
         favoriteGenre: args.favoriteGenre,
@@ -298,7 +291,7 @@ const resolvers = {
       return await user.save().catch((err) => {
         throw new GraphQLError('Creating the user failed', {
           extensions: {
-            cod: 'BAD_USER_INPUT',
+            code: 'BAD_USER_INPUT',
             invalidArgs: args.username,
             err,
           },
