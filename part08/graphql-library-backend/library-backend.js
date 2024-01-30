@@ -202,25 +202,10 @@ const resolvers = {
             book.genres[0].split(',').includes(args.genre)
           )
         }
-      } else if ('genre' in args) {
-        books = []
-        const genresToFind = args.genre.split(',')
-        console.log(genresToFind)
-        for (let genre of genresToFind) {
-          let newBooks
-          console.log(genre)
-          if(genre === '') newBooks = await Book.find()
-          else newBooks = await Book.find({
-            $text: { $search: genre },
-          })
-          console.log(newBooks)
-          books = books.concat(newBooks)
-        }
-        console.log(books)
-
-        // books = await Book.find({
-        //   $text: { $search: args.genre },
-        // })
+      } else if ('genre' in args ) {
+        books = await Book.find({
+          $text: { $search: args.genre },
+        })
       } else {
         books = await Book.find()
       }

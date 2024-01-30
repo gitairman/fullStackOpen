@@ -24,8 +24,8 @@ editBorn(
 `
 
 export const ALL_BOOKS = gql`
-query findBooksByAuthorOrGenre($author: String, $genre: String){
-  allBooks(author: $author, genre: $genre) {
+query getAll {
+  allBooks {
     title
     author {
         name

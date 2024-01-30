@@ -10,6 +10,7 @@ const NewBook = ({show }) => {
   const genre = useField('text', 'genre')
   const [genres, setGenres] = useState([])
   const [message, setMessage] = useState({type: true, message: ''})
+  const [refetchGenres, setRefetchGenres] = useState([])
 
   useEffect(() => {
     setMessage({type: true, message: ''})
@@ -29,7 +30,7 @@ const NewBook = ({show }) => {
     //     }
     //   })
     // },
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }, { query: FILTERED_BOOKS, variables: {genre: genres.join(',')} } ],
+    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }, ...refetchGenres ],
     awaitRefetchQueries: true
   })
 
@@ -58,6 +59,7 @@ const NewBook = ({show }) => {
 
   const addGenre = () => {
     console.log(genre.value)
+    setRefetchGenres(refetchGenres.concat({ query: FILTERED_BOOKS, variables: {genre: genre.value }}))
     setGenres(genres.concat(genre.value))
     console.log(genres)
     genre.onReset()
