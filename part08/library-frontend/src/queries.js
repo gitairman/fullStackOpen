@@ -23,9 +23,8 @@ editBorn(
 }
 `
 
-export const ALL_BOOKS = gql`
-query getAll {
-  allBooks {
+const BOOK_DETAILS = gql`
+fragment BookDetails on Book {
     title
     author {
         name
@@ -34,23 +33,26 @@ query getAll {
     }
     published
     genres
+    id
+}
+`
+
+export const ALL_BOOKS = gql`
+query getAll {
+  allBooks {
+    ...BookDetails
   }
 }
+${BOOK_DETAILS}
 `
 
 export const FILTERED_BOOKS = gql`
 query findBooksByAuthorOrGenre($author: String, $genre: String){
   allBooks(author: $author, genre: $genre) {
-    title
-    author {
-        name
-        born
-        bookCount
-    }
-    published
-    genres
+    ...BookDetails
   }
 }
+${BOOK_DETAILS}
 `
 
 export const CREATE_BOOK = gql`
@@ -61,15 +63,10 @@ mutation createBook($title: String!, $author: String!, $published: Int!, $genres
     published: $published,
     genres: $genres
   ) {
-    title
-    author {
-        name
-    }
-    published
-    genres
-    id
+    ...BookDetails
   }
 }
+${BOOK_DETAILS}
 `
 
 export const LOGIN = gql`
