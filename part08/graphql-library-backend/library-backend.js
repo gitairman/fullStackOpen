@@ -180,7 +180,6 @@ const resolvers = {
     bookCount: async () => Book.collection.countDocuments(),
     authorCount: async () => Author.collection.countDocuments(),
     allBooks: async (root, args) => {
-      console.log(args)
       let books = null
       let booksToFind = {}
       if ('author' in args && !('genre' in args)) {
@@ -209,7 +208,6 @@ const resolvers = {
       } else {
         books = await Book.find()
       }
-      console.log(books)
       return books
     },
     allAuthors: async () => Author.find(),

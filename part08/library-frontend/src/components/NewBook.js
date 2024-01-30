@@ -40,7 +40,6 @@ const NewBook = ({show }) => {
 
   const submit = async (e) => {
     e.preventDefault()
-    console.log(genres)
     createBook({
       variables: {
         title: title.value,
@@ -58,7 +57,6 @@ const NewBook = ({show }) => {
   }
 
   const addGenre = () => {
-    console.log(genre.value)
     setRefetchGenres(refetchGenres.concat({ query: FILTERED_BOOKS, variables: {genre: genre.value }}))
     setGenres(genres.concat(genre.value))
     console.log(genres)

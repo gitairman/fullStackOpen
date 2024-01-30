@@ -51,9 +51,6 @@ const Books = ({ show, token }) => {
   if (userResult.loading) {
     return <div>loading...</div>
   }
-
-  console.log(booksResult)
-  console.log(filteredResult)
   
   const books = booksResult.data.allBooks
   //find all the unique genres to filter by
@@ -77,8 +74,12 @@ const Books = ({ show, token }) => {
   }
 
   const handleFilterClick = async ({ target }) => {
-    await getByGenre({ variables: { genre: target.textContent } })
+    if (target.textContent === 'ALL') {
+      setFilter('')
+    } else {
+          await getByGenre({ variables: { genre: target.textContent } })
     setFilter(target.textContent)
+    }
   }
 
   const handleRecommendedClick = async () => {
@@ -119,6 +120,7 @@ const Books = ({ show, token }) => {
     <div>
       <h2>books</h2>
       {token && !userResult.loading ? recommend() : null}
+      <button onClick={handleFilterClick}>ALL</button>
       {genres.map(
         (g) =>
           g !== '' && (
