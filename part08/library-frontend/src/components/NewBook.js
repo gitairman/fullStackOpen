@@ -59,7 +59,6 @@ const NewBook = ({show }) => {
   const addGenre = () => {
     setRefetchGenres(refetchGenres.concat({ query: FILTERED_BOOKS, variables: {genre: genre.value }}))
     setGenres(genres.concat(genre.value))
-    console.log(genres)
     genre.onReset()
   }
 
