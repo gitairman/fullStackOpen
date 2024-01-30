@@ -24,7 +24,7 @@ const schema = new mongoose.Schema(
   { versionKey: false }
 )
 
-// schema.index({ genres: 'text' })
+schema.index({ genres: 'text' })
 schema.plugin(uniqueValidator)
 schema.plugin(require('mongoose-autopopulate'))
 

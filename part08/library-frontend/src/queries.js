@@ -6,7 +6,7 @@ query {
   allAuthors {
     name
     born
-    bookCount
+    books
   }
 }
 `
@@ -29,7 +29,6 @@ fragment BookDetails on Book {
     author {
         name
         born
-        bookCount
     }
     published
     genres
@@ -65,6 +64,15 @@ mutation createBook($title: String!, $author: String!, $published: Int!, $genres
   ) {
     ...BookDetails
   }
+}
+${BOOK_DETAILS}
+`
+
+export const BOOK_ADDED = gql`
+subscription {
+    bookAdded {
+        ...BookDetails
+    }
 }
 ${BOOK_DETAILS}
 `

@@ -3,12 +3,25 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm.js'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
+import { ALL_BOOKS, BOOK_ADDED } from './queries.js'
 
 const App = memo(() => {
   const [token, setToken] = useState(null)
   const [page, setPage] = useState('authors')
   const client = useApolloClient()
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({data, client}) => {
+      const addedBook = data.data.bookAdded
+      alert(`new book '${addedBook.title}' was added to the library`)
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook)
+        }
+      })
+    }
+  })
 
   useEffect(() => {
     const userToken = window.localStorage.getItem('library-user-token')

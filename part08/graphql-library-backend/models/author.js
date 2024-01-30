@@ -12,9 +12,15 @@ const schema = new mongoose.Schema({
   born: {
     type: Number,
   },
+  books: [
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book',
+    }
+  ]
 }, {versionKey: false})
 
-// schema.index({ name: 'text' })
+schema.index({ name: 'text' })
 schema.plugin(uniqueValidator)
 
 module.exports = mongoose.model('Author', schema)
