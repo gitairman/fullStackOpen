@@ -1,18 +1,36 @@
 const PersonForm = ({ elements }) => {
-    const [addPerson, handleNameChange, handleNumberChange, newName, newNumber] = elements
-    return (
+  const [addPerson, handleNameChange, handleNumberChange, newName, newNumber] =
+    elements
+  return (
+    <div className="contact-form">
       <form onSubmit={addPerson}>
-        <div>
-          name: <input onChange={handleNameChange} value={newName} />
-        </div>
-        <div>
-          number: <input onChange={handleNumberChange} value={newNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
+        <table className="contact-form">
+          <caption>Add a New Contact</caption>
+          <tbody>
+            <tr>
+              <td>Name:</td>
+              <td>
+                <input onChange={handleNameChange} value={newName} />
+              </td>
+            </tr>
+            <tr>
+              <td>Phone Number:</td>
+              <td>
+                <input onChange={handleNumberChange} value={newNumber} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+              </td>
+              <td style={{textAlign: 'left'}}>
+                <button type="submit">add</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </form>
-    )
-  }
+    </div>
+  )
+}
 
-  export default PersonForm
+export default PersonForm

@@ -4,6 +4,9 @@ import PersonForm from './components/PersonForm'
 import Person from './components/Person'
 import Notification from './components/Notification'
 import personsService from './services/personsService'
+import ContactList from './components/ContactList'
+import Header from './components/Header'
+import Navigation from './components/Navigation'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -15,8 +18,10 @@ const App = () => {
   useEffect(() => {
     personsService
       .getAll()
-      .then(people => setPersons(people))
-      .catch(error => displayMessage({ type: 'error', message: error.message }))
+      .then((people) => setPersons(people))
+      .catch((error) =>
+        displayMessage({ type: 'error', message: error.message })
+      )
   }, [])
 
   const addPerson = (e) => {
@@ -27,14 +32,24 @@ const App = () => {
     let personIdx = 0
 
     if (newName === '' || newNumber === '') {
-      displayMessage({ type: 'error', message: 'Both fields must contain a value!  Please try again.' })
+      displayMessage({
+        type: 'error',
+        message: 'Both fields must contain a value!  Please try again.',
+      })
       addNewPerson = false
-    } else if (persons.some(person => person.number === newNumber)) {
-      displayMessage({ type: 'error', message: `${newNumber} is already in use by someone else! Please try again.` })
+    } else if (persons.some((person) => person.number === newNumber)) {
+      displayMessage({
+        type: 'error',
+        message: `${newNumber} is already in use by someone else! Please try again.`,
+      })
       setNewNumber('')
       addNewPerson = false
-    } else if (persons.some(person => person.name === newName)) {
-      if (window.confirm(`${newName} is already in the phonebook, replace the phone number?`)) {
+    } else if (persons.some((person) => person.name === newName)) {
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook, replace the phone number?`
+        )
+      ) {
         updatePerson = true
         addNewPerson = false
       } else {
@@ -48,13 +63,20 @@ const App = () => {
       const newPerson = { name: newName, number: newNumber.toString() }
       personsService
         .create(newPerson)
-        .then(returnedPerson => {
+        .then((returnedPerson) => {
           setPersons([...persons, returnedPerson])
           setNewName('')
           setNewNumber('')
         })
-        .then(() => displayMessage({ type: 'info', message: `${newName} was successfully ADDED` }))
-        .catch(error => displayMessage({ type: 'error', message: error.response.data }))
+        .then(() =>
+          displayMessage({
+            type: 'info',
+            message: `${newName} was successfully ADDED`,
+          })
+        )
+        .catch((error) =>
+          displayMessage({ type: 'error', message: error.response.data })
+        )
     } else if (updatePerson) {
       const updatedPerson = { name: newName, number: newNumber.toString() }
       let found = persons.find(({ name }) => name === newName)
@@ -68,17 +90,25 @@ const App = () => {
         .update(personId, updatedPerson)
         .then((returnedPerson) => {
           if (!returnedPerson) {
-            displayMessage({ type: 'error', message: `${updatedPerson.name} has already been removed from phonebook!` })
-            updatedPersonsArray = updatedPersonsArray.filter(person => person.id !== personId)
+            displayMessage({
+              type: 'error',
+              message: `${updatedPerson.name} has already been removed from phonebook!`,
+            })
+            updatedPersonsArray = updatedPersonsArray.filter(
+              (person) => person.id !== personId
+            )
           } else {
             updatedPersonsArray[personIdx].number = returnedPerson.number
-            displayMessage({ type: 'info', message: `Number for ${newName} was successfully UPDATED` })
+            displayMessage({
+              type: 'info',
+              message: `Number for ${newName} was successfully UPDATED`,
+            })
           }
           setPersons(updatedPersonsArray)
           setNewName('')
           setNewNumber('')
         })
-        .catch(error => {
+        .catch((error) => {
           displayMessage({ type: 'error', message: error.response.data })
         })
     }
@@ -104,37 +134,57 @@ const App = () => {
   }
 
   const handleDelete = (personToDelete) => {
-    if (window.confirm(`Are you sure you want to delete ${personToDelete.name}`)) {
-      personsService.deletePerson(personToDelete.id)
+    if (
+      window.confirm(`Are you sure you want to delete ${personToDelete.name}`)
+    ) {
+      personsService
+        .deletePerson(personToDelete.id)
         .then((result) => {
-          setPersons([...persons.filter(person => person.id !== personToDelete.id)])
+          setPersons([
+            ...persons.filter((person) => person.id !== personToDelete.id),
+          ])
           if (!result) {
-            displayMessage({ type: 'error', message: `${personToDelete.name} has already been removed from phonebook!` })
+            displayMessage({
+              type: 'error',
+              message: `${personToDelete.name} has already been removed from phonebook!`,
+            })
           } else {
-            displayMessage({ type: 'info', message: `${personToDelete.name} was successfully DELETED` })
+            displayMessage({
+              type: 'info',
+              message: `${personToDelete.name} was successfully DELETED`,
+            })
           }
         })
-        .catch(error => displayMessage({ type: 'error', message: error.response.data }))
+        .catch((error) =>
+          displayMessage({ type: 'error', message: error.response.data })
+        )
     }
   }
 
-  const peopleToShow = newFilter === ''
-    ? persons
-    : persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+  const peopleToShow =
+    newFilter === ''
+      ? persons
+      : persons.filter((person) =>
+          person.name.toLowerCase().includes(newFilter.toLowerCase())
+        )
 
   return (
-    <div>
-      <h2>Phonebook</h2>
+    <>
+      <Header />
+      <Navigation />
       <Notification message={message} />
       <Filter handleFilterChange={handleFilterChange} />
-      <h3>Add a new person</h3>
-      <PersonForm elements={[addPerson, handleNameChange, handleNumberChange, newName, newNumber]} />
-      <h3>Numbers</h3>
-      <ul style={{ paddingLeft: 0 }} >
-        {peopleToShow.map(person =>
-          <Person key={person.id} person={person} handleDelete={() => handleDelete(person)} />)}
-      </ul>
-    </div>
+      <PersonForm
+        elements={[
+          addPerson,
+          handleNameChange,
+          handleNumberChange,
+          newName,
+          newNumber,
+        ]}
+      />
+      <ContactList peopleToShow={peopleToShow} handleDelete={handleDelete}/>
+    </>
   )
 }
 
