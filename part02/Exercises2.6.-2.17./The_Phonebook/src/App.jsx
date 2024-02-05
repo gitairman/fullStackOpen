@@ -13,6 +13,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
+  const [filterType, setFilterType] = useState('')
   const [message, setMessage] = useState(null)
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const App = () => {
     newFilter === ''
       ? persons
       : persons.filter((person) =>
-          person.name.toLowerCase().includes(newFilter.toLowerCase())
+          person[filterType].toLowerCase().includes(newFilter.toLowerCase())
         )
 
   return (
@@ -173,7 +174,11 @@ const App = () => {
       <Header />
       <Navigation />
       <Notification message={message} />
-      <Filter handleFilterChange={handleFilterChange} />
+      <Filter
+        handleFilterChange={handleFilterChange}
+        filterType={filterType}
+        setFilterType={setFilterType}
+      />
       <PersonForm
         elements={[
           addPerson,
@@ -183,7 +188,7 @@ const App = () => {
           newNumber,
         ]}
       />
-      <ContactList peopleToShow={peopleToShow} handleDelete={handleDelete}/>
+      <ContactList peopleToShow={peopleToShow} handleDelete={handleDelete} />
     </>
   )
 }

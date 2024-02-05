@@ -1,4 +1,4 @@
-const Filter = ({ handleFilterChange }) => {
+const Filter = ({ handleFilterChange, filterType, setFilterType }) => {
   return (
     <div className="contact-filter">
       <table className="contact-filter">
@@ -7,8 +7,11 @@ const Filter = ({ handleFilterChange }) => {
           <tr>
             <td>
               Filter by{' '}
-              <select>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}>
                 <option>name</option>
+                <option>number</option>
               </select>
               :
             </td>

@@ -1,18 +1,18 @@
-import { tableStyle } from "../styles/styles"
+import { tableStyle } from '../styles/styles'
 
 const Person = ({ person, handleDelete }) => {
+  console.log(person.number)
   return (
     <tr>
       <td>{person.name}</td>
       <td>{person.number}</td>
       <td></td>
-      <td>        <button onClick={console.log('open edit form')}>
-          edit
-        </button></td>
       <td>
-        <button onClick={handleDelete}>
-          delete
-        </button>
+        {' '}
+        <button onClick={() => console.log('open edit form')}>edit</button>
+      </td>
+      <td>
+        <button onClick={handleDelete}>delete</button>
       </td>
     </tr>
   )

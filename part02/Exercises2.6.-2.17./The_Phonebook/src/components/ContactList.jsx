@@ -8,7 +8,7 @@ const ContactList = ({ peopleToShow, handleDelete }) => {
         <caption>Contacts</caption>
         <thead>
           <tr>
-            <th >Name</th>
+            <th>Name</th>
             <th>Phone Number</th>
             <th>Email Address</th>
             <th>Edit</th>
@@ -16,13 +16,19 @@ const ContactList = ({ peopleToShow, handleDelete }) => {
           </tr>
         </thead>
         <tbody>
-          {peopleToShow.map((person) => (
-            <Person
-              key={person.id}
-              person={person}
-              handleDelete={() => handleDelete(person)}
-            />
-          ))}
+          {peopleToShow.length === 0 ? (
+            <tr className="no-filter-results">
+              <td colSpan={'5'}>No records found!</td>
+            </tr>
+          ) : (
+            peopleToShow.map((person) => (
+              <Person
+                key={person.id}
+                person={person}
+                handleDelete={() => handleDelete(person)}
+              />
+            ))
+          )}
         </tbody>
       </table>
     </div>
