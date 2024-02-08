@@ -1,7 +1,6 @@
 import { tableStyle } from '../styles/styles'
 
 const Person = ({ person, handleDelete }) => {
-  console.log(person.number)
   return (
     <tr>
       <td>{person.name}</td>

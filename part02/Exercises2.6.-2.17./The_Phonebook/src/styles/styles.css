@@ -1,5 +1,14 @@
+* {
+  background-color: lemonchiffon;
+  /* font-family: 'Courier New', Courier, monospace; */
+}
+
 h1 {
   border-bottom: 4px solid;
+}
+
+h2 {
+  margin-left: 1rem;
 }
 
 div {

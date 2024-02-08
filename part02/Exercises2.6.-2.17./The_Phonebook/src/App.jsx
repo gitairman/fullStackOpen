@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, memo } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import Person from './components/Person'
 import Notification from './components/Notification'
 import personsService from './services/personsService'
 import ContactList from './components/ContactList'
 import Header from './components/Header'
 import Navigation from './components/Navigation'
+import LoginForm from './components/LoginForm'
 
-const App = () => {
+const App = memo(() => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
-  const [filterType, setFilterType] = useState('')
+  const [filterType, setFilterType] = useState('name')
   const [message, setMessage] = useState(null)
+  const [loggedIn, setLoggedIn] = useState(false)
 
   useEffect(() => {
     personsService
@@ -169,11 +170,8 @@ const App = () => {
           person[filterType].toLowerCase().includes(newFilter.toLowerCase())
         )
 
-  return (
+  const loggedInViews = () => (
     <>
-      <Header />
-      <Navigation />
-      <Notification message={message} />
       <Filter
         handleFilterChange={handleFilterChange}
         filterType={filterType}
@@ -191,6 +189,18 @@ const App = () => {
       <ContactList peopleToShow={peopleToShow} handleDelete={handleDelete} />
     </>
   )
-}
+
+  return (
+    <>
+      <Header />
+      <Navigation />
+      <Notification message={message} />
+      <LoginForm setLoggedIn={setLoggedIn} loggedIn={loggedIn} />
+      {loggedIn && loggedInViews()}
+    </>
+  )
+})
+
+App.displayName = 'App'
 
 export default App

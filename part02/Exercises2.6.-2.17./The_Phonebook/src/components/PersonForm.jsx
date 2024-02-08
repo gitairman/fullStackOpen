@@ -3,9 +3,10 @@ const PersonForm = ({ elements }) => {
     elements
   return (
     <div className="contact-form">
+      <h2>-- Add a New Contact --</h2>
       <form onSubmit={addPerson}>
         <table className="contact-form">
-          <caption>Add a New Contact</caption>
+          {/* <caption>Add a New Contact</caption> */}
           <tbody>
             <tr>
               <td>Name:</td>
@@ -20,9 +21,8 @@ const PersonForm = ({ elements }) => {
               </td>
             </tr>
             <tr>
-              <td>
-              </td>
-              <td style={{textAlign: 'left'}}>
+              <td></td>
+              <td style={{ textAlign: 'left' }}>
                 <button type="submit">add</button>
               </td>
             </tr>

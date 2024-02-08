@@ -4,8 +4,9 @@ import Person from './Person'
 const ContactList = ({ peopleToShow, handleDelete }) => {
   return (
     <div>
+      <h2>-- List of Contacts --</h2>
       <table>
-        <caption>Contacts</caption>
+        {/* <caption>Contacts</caption> */}
         <thead>
           <tr>
             <th>Name</th>

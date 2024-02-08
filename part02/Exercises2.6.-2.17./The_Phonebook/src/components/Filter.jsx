@@ -1,8 +1,9 @@
 const Filter = ({ handleFilterChange, filterType, setFilterType }) => {
   return (
     <div className="contact-filter">
+      <h2>-- Filter Contacts --</h2>
       <table className="contact-filter">
-        <caption>Filter Contacts</caption>
+        {/* <caption>Filter Contacts</caption> */}
         <tbody>
           <tr>
             <td>
