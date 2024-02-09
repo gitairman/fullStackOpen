@@ -5,7 +5,7 @@ const Person = ({ person, handleDelete }) => {
     <tr>
       <td>{person.name}</td>
       <td>{person.number}</td>
-      <td></td>
+      <td>{person.email}</td>
       <td>
         {' '}
         <button onClick={() => console.log('open edit form')}>edit</button>

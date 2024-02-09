@@ -12,19 +12,24 @@ const App = memo(() => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [newEmail, setNewEmail] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [filterType, setFilterType] = useState('name')
   const [message, setMessage] = useState(null)
-  const [loggedIn, setLoggedIn] = useState(false)
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    personsService
-      .getAll()
-      .then((people) => setPersons(people))
-      .catch((error) =>
-        displayMessage({ type: 'error', message: error.message })
-      )
-  }, [])
+    if (user !== null) {
+      personsService
+        .getAll()
+        .then((people) =>
+          setPersons(people.filter((p) => p.addedBy === user.sub))
+        )
+        .catch((error) =>
+          displayMessage({ type: 'error', message: error.message })
+        )
+    } else setPersons([])
+  }, [user])
 
   const addPerson = (e) => {
     e.preventDefault()
@@ -33,10 +38,10 @@ const App = memo(() => {
     let updatePerson = false
     let personIdx = 0
 
-    if (newName === '' || newNumber === '') {
+    if (newName === '' || newNumber === '' || newEmail === '') {
       displayMessage({
         type: 'error',
-        message: 'Both fields must contain a value!  Please try again.',
+        message: 'All fields must contain a value!  Please try again.',
       })
       addNewPerson = false
     } else if (persons.some((person) => person.number === newNumber)) {
@@ -58,11 +63,17 @@ const App = memo(() => {
         addNewPerson = false
         setNewName('')
         setNewNumber('')
+        setNewEmail('')
       }
     }
 
     if (addNewPerson) {
-      const newPerson = { name: newName, number: newNumber.toString() }
+      const newPerson = {
+        name: newName,
+        number: newNumber.toString(),
+        email: newEmail,
+        addedBy: user.sub,
+      }
       personsService
         .create(newPerson)
         .then((returnedPerson) => {
@@ -116,12 +127,16 @@ const App = memo(() => {
     }
   }
 
-  const handleNameChange = (e) => {
-    setNewName(e.target.value)
+  const handleNameChange = ({ target }) => {
+    setNewName(target.value)
   }
 
-  const handleNumberChange = (e) => {
-    setNewNumber(e.target.value)
+  const handleNumberChange = ({ target }) => {
+    setNewNumber(target.value)
+  }
+
+  const handleEmailChange = ({ target }) => {
+    setNewEmail(target.value)
   }
 
   const handleFilterChange = (e) => {
@@ -182,8 +197,10 @@ const App = memo(() => {
           addPerson,
           handleNameChange,
           handleNumberChange,
+          handleEmailChange,
           newName,
           newNumber,
+          newEmail,
         ]}
       />
       <ContactList peopleToShow={peopleToShow} handleDelete={handleDelete} />
@@ -195,8 +212,8 @@ const App = memo(() => {
       <Header />
       <Navigation />
       <Notification message={message} />
-      <LoginForm setLoggedIn={setLoggedIn} loggedIn={loggedIn} />
-      {loggedIn && loggedInViews()}
+      <LoginForm setUser={setUser} />
+      {user !== null && loggedInViews()}
     </>
   )
 })

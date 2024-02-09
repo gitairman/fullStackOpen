@@ -1,15 +1,14 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 
-const LoginForm = ({ setLoggedIn, loggedIn }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-
+const LoginForm = ({ setUser }) => {
   const { loginWithRedirect, logout, user, isAuthenticated, isLoading } =
     useAuth0()
 
   useEffect(() => {
-    if (isAuthenticated) setLoggedIn(true)
+    if (isAuthenticated) {
+      setUser(user)
+    }
   }, [isAuthenticated])
 
   if (isLoading) {
