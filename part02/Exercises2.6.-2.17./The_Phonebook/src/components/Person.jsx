@@ -17,6 +17,10 @@ const Person = ({ contact }) => {
   }
 
   const handleSave = () => {
+    if (email === '') {
+      alert('no fields can be blank')
+      return
+    }
     const updatedPerson = {
       name: name,
       number: number.toString(),
@@ -41,6 +45,13 @@ const Person = ({ contact }) => {
     //     setEmail(person.email)
     //   })
 
+    setEditing(false)
+  }
+
+  const handleCancel = () => {
+    setName(contact.name)
+    setNumber(contact.number)
+    setEmail(contact.email)
     setEditing(false)
   }
 
@@ -103,10 +114,10 @@ const Person = ({ contact }) => {
       </td>
       <td>
         {' '}
-        <button onClick={() => handleSave()}>save</button>
+        <button onClick={handleSave}>save</button>
       </td>
       <td>
-        <button onClick={() => setEditing(false)}>cancel</button>
+        <button onClick={handleCancel}>cancel</button>
       </td>
     </tr>
   )
