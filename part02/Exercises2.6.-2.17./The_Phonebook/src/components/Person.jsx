@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import personsService from '../services/personsService'
 import { tableStyle } from '../styles/styles'
+import { useDispatch } from 'react-redux'
+import { editContact, remove } from '../features/contacts/contactsSlice'
 
-const Person = ({ person, handleDelete }) => {
-  const [name, setName] = useState(person.name)
-  const [number, setNumber] = useState(person.number)
-  const [email, setEmail] = useState(person.email)
+const Person = ({ contact }) => {
+  const [name, setName] = useState(contact.name)
+  const [number, setNumber] = useState(contact.number)
+  const [email, setEmail] = useState(contact.email)
   const [editing, setEditing] = useState(false)
+
+  const dispatch = useDispatch()
 
   const handleEdit = () => {
     setEditing(true)
@@ -19,23 +23,59 @@ const Person = ({ person, handleDelete }) => {
       email: email,
     }
 
-    personsService
-      .update(person.id, updatedPerson)
-      .then((returnedPerson) => {
-        if (!returnedPerson) {
-          alert('Person has already been removed from the phonebook!')
-        } else {
-          alert('Person was successfully UPDATED')
-        }
-      })
-      .catch((error) => {
-        alert(error.response.data)
-        setName(person.name)
-        setNumber(person.number)
-        setEmail(person.email)
-      })
+    dispatch(editContact(contact.id, updatedPerson))
+
+    // personsService
+    //   .update(person.id, updatedPerson)
+    //   .then((returnedPerson) => {
+    //     if (!returnedPerson) {
+    //       alert('Person has already been removed from the phonebook!')
+    //     } else {
+    //       alert('Person was successfully UPDATED')
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     alert(error.response.data)
+    //     setName(person.name)
+    //     setNumber(person.number)
+    //     setEmail(person.email)
+    //   })
 
     setEditing(false)
+  }
+
+  const handleDelete = (contactToDelete) => {
+    if (
+      window.confirm(`Are you sure you want to delete ${contactToDelete.name}`)
+    ) {
+      dispatch(remove(contactToDelete.id))
+
+      // personsService
+      //   .deletePerson(personToDelete.id)
+      //   .then((result) => {
+      //     setPersons([
+      //       ...persons.filter((person) => person.id !== personToDelete.id),
+      //     ])
+      //     if (!result) {
+      //       dispatch(
+      //         setTempNotify(
+      //           'error',
+      //           `${personToDelete.name} has already been removed from phonebook!`
+      //         )
+      //       )
+      //     } else {
+      //       dispatch(
+      //         setTempNotify(
+      //           'info',
+      //           `${personToDelete.name} was successfully DELETED`
+      //         )
+      //       )
+      //     }
+      //   })
+      //   .catch((error) =>
+      //     dispatch(setTempNotify('error', error.response.data))
+      //   )
+    }
   }
 
   const edit = () => (

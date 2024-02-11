@@ -7,28 +7,36 @@ import ContactList from './components/ContactList'
 import Header from './components/Header'
 import Navigation from './components/Navigation'
 import LoginForm from './components/LoginForm'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectMsg, setTempNotify } from './features/notify/notifySlice'
+import { initList } from './features/contacts/contactsSlice'
 
 const App = memo(() => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newEmail, setNewEmail] = useState('')
-  const [newFilter, setNewFilter] = useState('')
-  const [filterType, setFilterType] = useState('name')
-  const [message, setMessage] = useState(null)
+  // const [newFilter, setNewFilter] = useState('')
+  // const [filterType, setFilterType] = useState('name')
   const [user, setUser] = useState(null)
+
+  const dispatch = useDispatch()
+
+  // useEffect(() => {
+  //   if (user !== null) {
+  //     personsService
+  //       .getAll()
+  //       .then((people) =>
+  //         setPersons(people.filter((p) => p.addedBy === user.sub))
+  //       )
+  //       .catch((error) => dispatch(setTempNotify('error', error.message)))
+  //   } else setPersons([])
+  // }, [user])
 
   useEffect(() => {
     if (user !== null) {
-      personsService
-        .getAll()
-        .then((people) =>
-          setPersons(people.filter((p) => p.addedBy === user.sub))
-        )
-        .catch((error) =>
-          displayMessage({ type: 'error', message: error.message })
-        )
-    } else setPersons([])
+      dispatch(initList(user))
+    }
   }, [user])
 
   const addPerson = (e) => {
@@ -39,16 +47,20 @@ const App = memo(() => {
     let personIdx = 0
 
     if (newName === '' || newNumber === '' || newEmail === '') {
-      displayMessage({
-        type: 'error',
-        message: 'All fields must contain a value!  Please try again.',
-      })
+      dispatch(
+        setTempNotify(
+          'error',
+          'All fields must contain a value!  Please try again.'
+        )
+      )
       addNewPerson = false
     } else if (persons.some((person) => person.number === newNumber)) {
-      displayMessage({
-        type: 'error',
-        message: `${newNumber} is already in use by someone else! Please try again.`,
-      })
+      dispatch(
+        setTempNotify(
+          'error',
+          `${newNumber} is already in use by someone else! Please try again.`
+        )
+      )
       setNewNumber('')
       addNewPerson = false
     } else if (persons.some((person) => person.name === newName)) {
@@ -82,14 +94,9 @@ const App = memo(() => {
           setNewNumber('')
         })
         .then(() =>
-          displayMessage({
-            type: 'info',
-            message: `${newName} was successfully ADDED`,
-          })
+          dispatch(setTempNotify('info', `${newName} was successfully ADDED`))
         )
-        .catch((error) =>
-          displayMessage({ type: 'error', message: error.response.data })
-        )
+        .catch((error) => dispatch(setTempNotify('error', error.response.data)))
     } else if (updatePerson) {
       const updatedPerson = { name: newName, number: newNumber.toString() }
       let found = persons.find(({ name }) => name === newName)
@@ -103,26 +110,30 @@ const App = memo(() => {
         .update(personId, updatedPerson)
         .then((returnedPerson) => {
           if (!returnedPerson) {
-            displayMessage({
-              type: 'error',
-              message: `${updatedPerson.name} has already been removed from phonebook!`,
-            })
+            dispatch(
+              setTempNotify(
+                'error',
+                `${updatedPerson.name} has already been removed from phonebook!`
+              )
+            )
             updatedPersonsArray = updatedPersonsArray.filter(
               (person) => person.id !== personId
             )
           } else {
             updatedPersonsArray[personIdx].number = returnedPerson.number
-            displayMessage({
-              type: 'info',
-              message: `Number for ${newName} was successfully UPDATED`,
-            })
+            dispatch(
+              setTempNotify(
+                'info',
+                `Number for ${newName} was successfully UPDATED`
+              )
+            )
           }
           setPersons(updatedPersonsArray)
           setNewName('')
           setNewNumber('')
         })
         .catch((error) => {
-          displayMessage({ type: 'error', message: error.response.data })
+          dispatch(setTempNotify('error', error.response.data))
         })
     }
   }
@@ -139,59 +150,50 @@ const App = memo(() => {
     setNewEmail(target.value)
   }
 
-  const handleFilterChange = (e) => {
-    setNewFilter(e.target.value)
-  }
+  // const handleFilterChange = (e) => {
+  //   setNewFilter(e.target.value)
+  // }
 
-  const displayMessage = (messageToDisplay) => {
-    setMessage(messageToDisplay)
-    setTimeout(() => {
-      setMessage(null)
-    }, 4000)
-  }
+  // const handleDelete = (personToDelete) => {
+  //   if (
+  //     window.confirm(`Are you sure you want to delete ${personToDelete.name}`)
+  //   ) {
+  //     personsService
+  //       .deletePerson(personToDelete.id)
+  //       .then((result) => {
+  //         setPersons([
+  //           ...persons.filter((person) => person.id !== personToDelete.id),
+  //         ])
+  //         if (!result) {
+  //           dispatch(
+  //             setTempNotify(
+  //               'error',
+  //               `${personToDelete.name} has already been removed from phonebook!`
+  //             )
+  //           )
+  //         } else {
+  //           dispatch(
+  //             setTempNotify(
+  //               'info',
+  //               `${personToDelete.name} was successfully DELETED`
+  //             )
+  //           )
+  //         }
+  //       })
+  //       .catch((error) => dispatch(setTempNotify('error', error.response.data)))
+  //   }
+  // }
 
-  const handleDelete = (personToDelete) => {
-    if (
-      window.confirm(`Are you sure you want to delete ${personToDelete.name}`)
-    ) {
-      personsService
-        .deletePerson(personToDelete.id)
-        .then((result) => {
-          setPersons([
-            ...persons.filter((person) => person.id !== personToDelete.id),
-          ])
-          if (!result) {
-            displayMessage({
-              type: 'error',
-              message: `${personToDelete.name} has already been removed from phonebook!`,
-            })
-          } else {
-            displayMessage({
-              type: 'info',
-              message: `${personToDelete.name} was successfully DELETED`,
-            })
-          }
-        })
-        .catch((error) =>
-          displayMessage({ type: 'error', message: error.response.data })
-        )
-    }
-  }
-
-  const peopleToShow =
-    newFilter === ''
-      ? persons
-      : persons.filter((person) =>
-          person[filterType].toLowerCase().includes(newFilter.toLowerCase())
-        )
+  // const peopleToShow =
+  //   newFilter === ''
+  //     ? persons
+  //     : persons.filter((person) =>
+  //         person[filterType].toLowerCase().includes(newFilter.toLowerCase())
+  //       )
 
   const loggedInViews = () => (
     <>
-      <Filter
-        handleFilterChange={handleFilterChange}
-        filterType={filterType}
-        setFilterType={setFilterType}
-      />
+      <Filter />
       <PersonForm
         elements={[
           addPerson,
@@ -203,7 +205,7 @@ const App = memo(() => {
           newEmail,
         ]}
       />
-      <ContactList peopleToShow={peopleToShow} handleDelete={handleDelete} />
+      <ContactList />
     </>
   )
 
@@ -211,7 +213,7 @@ const App = memo(() => {
     <>
       <Header />
       <Navigation />
-      <Notification message={message} />
+      <Notification />
       <LoginForm setUser={setUser} />
       {user !== null && loggedInViews()}
     </>

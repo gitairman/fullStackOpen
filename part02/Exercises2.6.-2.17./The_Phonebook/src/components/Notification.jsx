@@ -1,16 +1,19 @@
-import { errorStyle, infoStyle } from "../styles/styles"
+import { useSelector } from 'react-redux'
+import { errorStyle, infoStyle } from '../styles/styles'
+import { selectMsg } from '../features/notify/notifySlice'
 
-const Notification = ({ message }) => {
+const Notification = () => {
+  const message = useSelector(selectMsg)
 
-    if (message === null) {
-        return null
-    }
+  if (message === null) {
+    return null
+  }
 
-    return (
-        <div style={message.type === 'info' ? infoStyle : errorStyle}>
-            {message.message}
-        </div>
-    )
+  return (
+    <div style={message.type === 'info' ? infoStyle : errorStyle}>
+      {message.msg}
+    </div>
+  )
 }
 
 export default Notification
